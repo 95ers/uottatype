@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { diffChars } from 'diff';
-	import { Updates, Addition, Deletion } from '$lib';
+	import type { Updates, Addition, Deletion } from '$lib';
 	let {
 		onContentUpdate
 	}: {
