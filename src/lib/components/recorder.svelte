@@ -42,8 +42,6 @@
 
 	let chunks: Blob[] = [];
 
-	$effect(() => {});
-
 	async function onClick() {
 		if (!audio) {
 			const good = await requestMedia();

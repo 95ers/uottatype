@@ -45,11 +45,11 @@
 				</g></svg
 			>
 		</div>
-		<h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+		<h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Create your account</h2>
 		<p class="mt-2 text-center text-sm text-gray-600">
 			Or
-			<a href="/auth/register" class="font-medium text-blue-600 hover:text-blue-500">
-				create a new account
+			<a href="/auth/login" class="font-medium text-blue-600 hover:text-blue-500">
+				Log in to an existing account
 			</a>
 		</p>
 	</div>
@@ -81,10 +81,11 @@
 					</div>
 				</div>
 				<button
+					formaction="?/register"
 					type="submit"
 					class="flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
 				>
-					Sign in
+					Register
 				</button>
 			</form>
 			<p style="color: red">{form?.message ?? ''}</p>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog';
-	import * as ContextMenu from '$lib/components/ui/context-menu';
+	import * as Drawer from '$lib/components/ui/drawer';
 	import { diffChars } from 'diff';
 	import type { Updates } from '$lib';
 	import { Button } from './ui/button';
@@ -169,8 +169,10 @@
 	let addUserOpen = $state(false);
 	let addUserUsername = $state('');
 
-	function onContextMenu(event: MouseEvent) {
-		event.preventDefault();
+	function onClick(event: MouseEvent) {
+		if (event.target.nodeName === 'IMG') {
+			// open side menu for image thing
+		}
 	}
 </script>
 
@@ -261,43 +263,13 @@
 		</Button>
 	</div>
 
-	<ContextMenu.Root>
-		<ContextMenu.Trigger>
-			<div
-				bind:this={editorElement}
-				contenteditable="true"
-				class="mx-16 h-screen min-h-[150px] w-full max-w-5xl rounded border bg-white p-24 focus:outline-none"
-				bind:innerHTML={editorContent}
-				oninput={onInput}
-				spellcheck="false"
-			></div>
-		</ContextMenu.Trigger>
-		<ContextMenu.Content class="w-64">
-			<ContextMenu.Item inset>
-				Back
-				<ContextMenu.Shortcut>⌘[</ContextMenu.Shortcut>
-			</ContextMenu.Item>
-			<ContextMenu.Item inset>
-				Forward
-				<ContextMenu.Shortcut>⌘]</ContextMenu.Shortcut>
-			</ContextMenu.Item>
-			<ContextMenu.Item inset>
-				Reload
-				<ContextMenu.Shortcut>⌘R</ContextMenu.Shortcut>
-			</ContextMenu.Item>
-			<ContextMenu.Sub>
-				<ContextMenu.SubTrigger inset>More Tools</ContextMenu.SubTrigger>
-				<ContextMenu.SubContent class="w-48">
-					<ContextMenu.Item>
-						Save Page As...
-						<ContextMenu.Shortcut>⇧⌘S</ContextMenu.Shortcut>
-					</ContextMenu.Item>
-					<ContextMenu.Item>Create Shortcut...</ContextMenu.Item>
-					<ContextMenu.Item>Name Window...</ContextMenu.Item>
-					<ContextMenu.Separator />
-					<ContextMenu.Item>Developer Tools</ContextMenu.Item>
-				</ContextMenu.SubContent>
-			</ContextMenu.Sub>
-		</ContextMenu.Content>
-	</ContextMenu.Root>
+	<div
+		bind:this={editorElement}
+		contenteditable="true"
+		class="mx-16 h-screen min-h-[150px] w-full max-w-5xl break-words rounded border bg-white p-24 focus:outline-none"
+		bind:innerHTML={editorContent}
+		oninput={onInput}
+		spellcheck="false"
+		onclick={onClick}
+	></div>
 </div>
