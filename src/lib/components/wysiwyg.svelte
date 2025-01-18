@@ -6,7 +6,7 @@
 	import { Button } from './ui/button';
 	import { Input } from './ui/input';
 	import { Label } from './ui/label';
-	import { untrack } from 'svelte';
+	import { getContext, untrack } from 'svelte';
 	import type { Document } from '$lib/server/db/schema';
 	import {
 		AArrowDown,
@@ -45,6 +45,8 @@
 	let previousContent = untrack(() => editorContent);
 	let editorElement: HTMLDivElement;
 
+	let currentLine = 0;
+
 	export function applyUpdates(updates: Updates) {
 		for (const update of updates) {
 			if (update.type === 'insert') {
@@ -59,40 +61,8 @@
 		previousContent = editorContent;
 	}
 
-	function getComputedStyleProperty(el: Node | ParentNode, propName: string) {
-		if (window.getComputedStyle) {
-			return window.getComputedStyle(el, null)[propName];
-		} else if (el.currentStyle) {
-			return el.currentStyle[propName];
-		}
-	}
-
 	export function setTitle(t: string) {
 		title = t;
-	}
-
-	function reportColourAndFontSize() {
-		let containerEl: Node | ParentNode | null;
-		let sel: Selection | null;
-		if (window.getSelection) {
-			sel = window.getSelection();
-			if (sel?.rangeCount) {
-				containerEl = sel.getRangeAt(0).commonAncestorContainer;
-				// Make sure we have an element rather than a text node
-				if (containerEl.nodeType == 3) {
-					containerEl = containerEl.parentNode;
-				}
-			}
-		} else if ((sel = document.selection) && sel.type != 'Control') {
-			containerEl = sel.createRange().parentElement();
-		}
-
-		if (containerEl) {
-			var fontSize = getComputedStyleProperty(containerEl, 'fontSize');
-			var colour = getComputedStyleProperty(containerEl, 'color');
-
-			return fontSize;
-		}
 	}
 
 	/**
@@ -173,6 +143,13 @@
 	let addUserUsername = $state('');
 
 	function onClick(event: MouseEvent) {
+		event.preventDefault();
+		editorElement.focus();
+
+		const line = getCurrentLineNumber();
+
+		currentLine = line;
+
 		if (event.target.nodeName === 'IMG') {
 			imageActionsOpen = true;
 			selectedImage = event.target as HTMLImageElement;
@@ -181,6 +158,40 @@
 			selectedImage = null;
 		}
 	}
+
+	// ... ???
+	function getCurrentLineNumber() {
+		const lineHeight = parseFloat(window.getComputedStyle(editorElement).lineHeight.slice(0, -2));
+		const save = window.getSelection();
+		const s = window.getSelection();
+
+		if (!save || !s) return -1;
+
+		s.modify('extend', 'forward', 'character');
+		const range = s.getRangeAt(0);
+		let p = range.getClientRects();
+		let top;
+		if (typeof p[1] != 'undefined') {
+			top = p[1].top + window.scrollY;
+		} else if (typeof p[0] != 'undefined') {
+			top = p[0].top + window.scrollY;
+		} else {
+			const canvas = document.createElement('canvas');
+			canvas.setAttribute('id', 'tempCaretFinder');
+			range.insertNode(canvas);
+			const p = document.querySelector('canvas#tempCaretFinder')!.getBoundingClientRect();
+			document.querySelector('canvas#tempCaretFinder')?.remove();
+			top = p.top;
+		}
+
+		if (range.endOffset === range.startOffset + 1) save.modify('move', 'backward', 'character');
+
+		return Math.ceil((top - editorElement.getBoundingClientRect().top) / lineHeight) - 5;
+	}
+
+	$effect(() => {
+		console.log('Current line', currentLine);
+	});
 
 	let imageActionsOpen = $state(false);
 	let selectedImage: HTMLImageElement | null;
@@ -311,5 +322,16 @@
 		oninput={onInput}
 		spellcheck="false"
 		onclick={onClick}
+		onkeydown={(e) => {
+			if (
+				e.key === 'Enter' ||
+				e.key === 'ArrowDown' ||
+				e.key === 'ArrowUp' ||
+				e.key === 'ArrowLeft' ||
+				e.key === 'ArrowRight'
+			) {
+				currentLine = getCurrentLineNumber();
+			}
+		}}
 	></div>
 </div>
