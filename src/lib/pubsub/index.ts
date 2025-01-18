@@ -40,7 +40,7 @@ export class Client extends EventEmitter {
 			const destination = message.getDestination();
 
 			if (destination) {
-				this.emit(destination.getName(), message);
+				this.emit(destination.getName(), JSON.parse(message.getBinaryAttachment() as string));
 			}
 		});
 	}
@@ -92,13 +92,13 @@ export class Client extends EventEmitter {
 		);
 	}
 
-	public async subscribe(topic: string, fn: (message: solace.Message) => void) {
+	public async subscribe(topic: string, fn: (message: object) => void) {
 		super.on(topic, fn);
 
 		return this.startSubscription(topic);
 	}
 
-	public async unsubscribe(topic: string, fn: (message: solace.Message) => void) {
+	public async unsubscribe(topic: string, fn: (message: object) => void) {
 		super.off(topic, fn);
 
 		if (this.listenerCount(topic) === 0) {
@@ -106,13 +106,13 @@ export class Client extends EventEmitter {
 		}
 	}
 
-	public async publish(topic: string, content: string) {
+	public async publish(topic: string, content: object) {
 		await this.ready;
 
 		const message = solace.SolclientFactory.createMessage();
 
 		message.setDestination(solace.SolclientFactory.createTopicDestination(topic));
-		message.setBinaryAttachment(content);
+		message.setBinaryAttachment(JSON.stringify(content));
 		message.setDeliveryMode(solace.MessageDeliveryModeType.DIRECT);
 
 		this.session.send(message);
