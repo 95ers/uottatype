@@ -1,19 +1,6 @@
-<script module lang="ts">
-	type Addition = {
-		index: number;
-		text: string;
-	};
-
-	type Deletion = {
-		index: number;
-		offset: number;
-	};
-
-	type Updates = Array<Addition | Deletion>;
-</script>
-
 <script lang="ts">
 	import { diffChars } from 'diff';
+	import { Updates, Addition, Deletion } from '$lib';
 	let {
 		onContentUpdate
 	}: {
@@ -33,31 +20,6 @@
 		document.execCommand(command, false, value);
 		captureUpdate();
 	};
-
-	/**
-	 * Sets a specific subslice of the content programmatically.
-	 * @param {string} newContent - The new content to set.
-	 * @param {number} start - The starting index of the subslice.
-	 * @param {number} end - The ending index of the subslice.
-	 */
-	export function setSubsliceContent(newContent: string, start: number, end: number) {
-		const contentText = getTextContent();
-		const updatedContent = contentText.slice(0, start) + newContent + contentText.slice(end);
-		setEditorContent(updatedContent);
-	}
-
-	const getTextContent = () => editorElement?.innerText || '';
-
-	/**
-	 * Sets the entire editor content programmatically.
-	 * @param {string} content - The new content to set.
-	 */
-	export function setEditorContent(content: string) {
-		editorContent = content;
-		if (editorElement) {
-			editorElement.innerHTML = editorContent;
-		}
-	}
 
 	const captureUpdate = () => {
 		console.log(editorContent);

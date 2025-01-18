@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { WrappedAction } from '$lib';
+	import type { Authenticated, Updates } from '$lib';
 	import type { PageServerData } from './$types';
 
 	let { data }: { data: PageServerData } = $props();
@@ -19,13 +19,13 @@
 		client.unsubscribe(topic, onUpdate);
 	});
 
-	async function onUpdate({ action, userId }: WrappedAction) {
+	async function onUpdate({ action, userId }: Authenticated<Updates>) {
 		if (userId === data.user.id) return;
 
 		editor.setSubsliceContent(action.content, action.position, action.position);
 	}
 
-	async function onContentUpdate(action: Action) {
+	async function onContentUpdate(action: Updates) {
 		client.publish(topic, {
 			userId: data.user.id,
 			action

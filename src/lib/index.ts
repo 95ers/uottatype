@@ -1,10 +1,16 @@
-export type Action = {
-	type: 'insert' | 'delete';
-	content: string;
-	position: number;
+export type Authenticated<T> = {
+	userId: string;
+	action: T;
 };
 
-export type WrappedAction = {
-	userId: string;
-	action: Action;
+export type Addition = {
+	index: number;
+	text: string;
 };
+
+export type Deletion = {
+	index: number;
+	offset: number;
+};
+
+export type Updates = (Addition | Deletion)[];
