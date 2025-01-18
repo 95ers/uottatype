@@ -52,6 +52,8 @@
 		"@oslojs/encoding": "^1.1.0",
 		"drizzle-orm": "^0.38.4",
 		"eventemitter3": "^5.0.1",
+		"fs": "0.0.1-security",
+		"groq-sdk": "^0.12.0",
 		"lucide-svelte": "^0.473.0",
 		"postgres": "^3.4.5",
 		"solclientjs": "^10.17.1"
