@@ -8,6 +8,7 @@
 	import Wysiwyg from '$lib/components/wysiwyg.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import Proximity from '$lib/components/proximity.svelte';
 
 	const topic = `95ers/document/${data.doc.id}`;
 

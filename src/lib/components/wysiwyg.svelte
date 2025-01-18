@@ -6,7 +6,7 @@
 	import { Button } from './ui/button';
 	import { Input } from './ui/input';
 	import { Label } from './ui/label';
-	import { getContext, untrack } from 'svelte';
+	import { untrack } from 'svelte';
 	import type { Document } from '$lib/server/db/schema';
 	import {
 		AArrowDown,
@@ -23,6 +23,7 @@
 	} from 'lucide-svelte';
 	import Recorder from './recorder.svelte';
 	import ImageCapture from './image-capture.svelte';
+	import Proximity from './proximity.svelte';
 
 	let {
 		onContentUpdate,
@@ -40,12 +41,14 @@
 		userId: string;
 	} = $props();
 
+	let proxmity: Proximity;
+
 	let title = $state(doc.title);
 	let editorContent = $state(doc.content);
 	let previousContent = untrack(() => editorContent);
 	let editorElement: HTMLDivElement;
 
-	let currentLine = 0;
+	let currentLine = $state(0);
 
 	export function applyUpdates(updates: Updates) {
 		for (const update of updates) {
@@ -60,6 +63,11 @@
 
 		previousContent = editorContent;
 	}
+
+	$effect(() => {
+		proxmity.setLine(currentLine);
+		console.log({ currentLine });
+	});
 
 	export function setTitle(t: string) {
 		title = t;
@@ -335,3 +343,5 @@
 		}}
 	></div>
 </div>
+
+<Proximity documentId={doc.id} {userId} initialLine={0} bind:this={proxmity} />
