@@ -1,8 +1,9 @@
-import { error } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { document, documentAccess, user } from '$lib/server/db/schema';
 import { and, eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
+import { groq } from '$lib/server/client';
 
 export const load: PageServerLoad = async (event) => {
 	const [doc] = await db.select().from(document).where(eq(document.id, event.params.id));

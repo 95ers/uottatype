@@ -62,6 +62,24 @@
 			body: params
 		});
 	}
+
+	async function onGenerateAltText(image: HTMLImageElement) {
+		const params = new URLSearchParams();
+
+		params.append('image', image.src);
+
+		const response = await fetch(`/api/generateAltText`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			},
+			body: params
+		});
+
+		const { altText } = await response.json();
+
+		return altText;
+	}
 </script>
 
 <Wysiwyg
@@ -69,6 +87,7 @@
 	{onContentUpdate}
 	{onTitleUpdate}
 	{onUserAdd}
+	{onGenerateAltText}
 	document={data.doc}
 	userId={data.user.id}
 />

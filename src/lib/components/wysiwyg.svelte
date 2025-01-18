@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog';
-	import * as Drawer from '$lib/components/ui/drawer';
+	import * as Sheet from '$lib/components/ui/sheet';
 	import { diffChars } from 'diff';
 	import type { Updates } from '$lib';
 	import { Button } from './ui/button';
@@ -27,12 +27,14 @@
 		onContentUpdate,
 		onTitleUpdate,
 		onUserAdd,
+		onGenerateAltText,
 		document: doc,
 		userId
 	}: {
 		onContentUpdate: (updates: Updates) => void;
 		onTitleUpdate: (title: string) => void;
 		onUserAdd: (username: string) => void;
+		onGenerateAltText: (image: HTMLImageElement) => Promise<string>;
 		document: Document;
 		userId: string;
 	} = $props();
@@ -171,9 +173,16 @@
 
 	function onClick(event: MouseEvent) {
 		if (event.target.nodeName === 'IMG') {
-			// open side menu for image thing
+			imageActionsOpen = true;
+			selectedImage = event.target as HTMLImageElement;
+		} else {
+			imageActionsOpen = false;
+			selectedImage = null;
 		}
 	}
+
+	let imageActionsOpen = $state(false);
+	let selectedImage: HTMLImageElement | null;
 </script>
 
 <Dialog.Root open={addUserOpen} onOpenChange={(o) => (addUserOpen = o)}>
@@ -202,7 +211,26 @@
 	</Dialog.Content>
 </Dialog.Root>
 
-<div class="flex w-full flex-col items-center bg-gray-50">
+<Sheet.Root open={imageActionsOpen} onOpenChange={(o) => (imageActionsOpen = o)}>
+	<Sheet.Content side="left">
+		<Sheet.Header>
+			<Sheet.Title>Image actions</Sheet.Title>
+			<Sheet.Description>Caption, alt text, and more.</Sheet.Description>
+		</Sheet.Header>
+		<Sheet.Footer>
+			<Button
+				type="submit"
+				onclick={async () => {
+					const alt = await onGenerateAltText(selectedImage!);
+
+					document.execCommand('insertText', false, alt);
+				}}>Generate caption</Button
+			>
+		</Sheet.Footer>
+	</Sheet.Content>
+</Sheet.Root>
+
+<div class="flex w-full flex-col items-center bg-gray-50 p-8">
 	<div class="mx-16 mt-8 flex w-full max-w-5xl p-1">
 		<Input class="border-none bg-gray-50 text-2xl" bind:value={title} />
 	</div>
@@ -231,13 +259,22 @@
 			<AlignLeft size="24" />
 		</Button>
 
-		<Button variant="secondary" onclick={() => executeCommand('createLink', prompt('Enter URL'))}>
+		<Button
+			variant="secondary"
+			onclick={() => {
+				const url = prompt('Enter URL');
+				if (url) executeCommand('createLink', url);
+			}}
+		>
 			<Link size="24" />
 		</Button>
 
 		<Button
 			variant="secondary"
-			onclick={() => executeCommand('insertImage', prompt('Enter image URL'))}
+			onclick={() => {
+				const url = prompt('Enter image URL');
+				if (url) executeCommand('insertImage', url);
+			}}
 		>
 			<ImagePlus size="24" />
 		</Button>
@@ -266,7 +303,7 @@
 	<div
 		bind:this={editorElement}
 		contenteditable="true"
-		class="mx-16 h-screen min-h-[150px] w-full max-w-5xl break-words rounded border bg-white p-24 focus:outline-none"
+		class="mx-16 min-h-[150px] min-h-screen w-full max-w-5xl break-words rounded border bg-white p-24 focus:outline-none"
 		bind:innerHTML={editorContent}
 		oninput={onInput}
 		spellcheck="false"
