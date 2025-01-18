@@ -1,4 +1,4 @@
-import { pgTable, serial, text, integer, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, text, integer, timestamp, uuid, primaryKey } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('user', {
 	id: text('id').primaryKey(),
@@ -14,6 +14,29 @@ export const session = pgTable('session', {
 		.references(() => user.id),
 	expiresAt: timestamp('expires_at', { withTimezone: true, mode: 'date' }).notNull()
 });
+
+export const document = pgTable('document', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	authorId: text('author_id')
+		.notNull()
+		.references(() => user.id),
+	title: text('title').notNull(),
+	content: text('content').notNull(),
+	createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
+});
+
+export const documentAccess = pgTable(
+	'document_access',
+	{
+		documentId: uuid('document_id')
+			.notNull()
+			.references(() => document.id),
+		userId: text('user_id')
+			.notNull()
+			.references(() => user.id)
+	},
+	(t) => [primaryKey({ columns: [t.documentId, t.userId] })]
+);
 
 export type Session = typeof session.$inferSelect;
 
