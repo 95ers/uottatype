@@ -252,7 +252,7 @@
 	<div
 		bind:this={editorElement}
 		contenteditable="true"
-		class="mx-16 h-screen min-h-[150px] w-full max-w-5xl rounded border bg-white p-4 focus:outline-none"
+		class="mx-16 h-screen min-h-[150px] w-full max-w-5xl rounded border bg-white p-24 focus:outline-none"
 		bind:innerHTML={editorContent}
 		oninput={onInput}
 		spellcheck="false"
