@@ -1,19 +1,15 @@
 <script lang="ts">
+	import type { WrappedAction } from '$lib';
 	import type { PageServerData } from './$types';
 
 	let { data }: { data: PageServerData } = $props();
 	import { client } from '$lib/solace';
 	import { onDestroy } from 'svelte';
-	import Wysiwyg, { type Action } from '$lib/components/wysiwyg.svelte';
+	import Wysiwyg from '$lib/components/wysiwyg.svelte';
 
 	const topic = `95ers/document/${data.doc.id}/update`;
 
 	let editor: Wysiwyg;
-
-	type WrappedAction = {
-		userId: string;
-		action: Action;
-	};
 
 	$effect(() => {
 		client.subscribe(topic, onUpdate);
@@ -23,8 +19,8 @@
 		client.unsubscribe(topic, onUpdate);
 	});
 
-	async function onUpdate(action: WrappedAction) {
-		if (action.userId === data.user.id) return;
+	async function onUpdate({ action, userId }: WrappedAction) {
+		if (userId === data.user.id) return;
 
 		editor.setSubsliceContent(action.content, action.position, action.position);
 	}

@@ -1,1 +1,10 @@
-// place files you want to import through the `$lib` alias in this folder.
+export type Action = {
+	type: 'insert' | 'delete';
+	content: string;
+	position: number;
+};
+
+export type WrappedAction = {
+	userId: string;
+	action: Action;
+};

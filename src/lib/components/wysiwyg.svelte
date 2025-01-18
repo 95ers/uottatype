@@ -1,12 +1,6 @@
-<script module lang="ts">
-	export type Action = {
-		type: 'insert' | 'delete';
-		content: string;
-		position: number;
-	};
-</script>
-
 <script lang="ts">
+	import type { Action } from '$lib';
+
 	let {
 		onContentUpdate
 	}: {

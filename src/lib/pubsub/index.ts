@@ -40,7 +40,18 @@ export class Client extends EventEmitter {
 			const destination = message.getDestination();
 
 			if (destination) {
-				this.emit(destination.getName(), JSON.parse(message.getBinaryAttachment() as string));
+				const name = destination.getName();
+
+				this.emit(name, JSON.parse(message.getBinaryAttachment() as string), name);
+
+				// emit with wildcard in each topic path part
+				const parts = name.split('/');
+
+				for (let i = 0; i < parts.length; i++) {
+					const wildcard = parts.map((_, j) => (j !== i ? parts[j] : '*')).join('/');
+
+					this.emit(wildcard, JSON.parse(message.getBinaryAttachment() as string), name);
+				}
 			}
 		});
 	}
@@ -92,13 +103,13 @@ export class Client extends EventEmitter {
 		);
 	}
 
-	public async subscribe(topic: string, fn: (message: object) => void) {
+	public async subscribe(topic: string, fn: (message: object, topic: string) => void) {
 		super.on(topic, fn);
 
 		return this.startSubscription(topic);
 	}
 
-	public async unsubscribe(topic: string, fn: (message: object) => void) {
+	public async unsubscribe(topic: string, fn: (message: object, topic: string) => void) {
 		super.off(topic, fn);
 
 		if (this.listenerCount(topic) === 0) {
