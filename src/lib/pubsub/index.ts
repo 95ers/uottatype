@@ -103,29 +103,45 @@ export class Client extends EventEmitter {
 		);
 	}
 
-	public async subscribe(topic: string, fn: (message: object, topic: string) => void) {
-		super.on(topic, fn);
-
-		return this.startSubscription(topic);
+	public subscribeJson(topic: string, fn: (message: object, topic: string) => void) {
+		return this.subscribe(topic, (message, topic) =>
+			fn(JSON.parse(message.getBinaryAttachment() as string), topic)
+		);
 	}
 
-	public async unsubscribe(topic: string, fn: (message: object, topic: string) => void) {
+	public subscribe(topic: string, fn: (message: solace.Message, topic: string) => void) {
+		super.on(topic, fn);
+		this.startSubscription(topic);
+		return fn;
+	}
+
+	public unsubscribe(topic: string, fn: (message: solace.Message, topic: string) => void) {
 		super.off(topic, fn);
 
 		if (this.listenerCount(topic) === 0) {
-			await this.stopSubscription(topic);
+			this.stopSubscription(topic);
 		}
 	}
 
-	public async publish(topic: string, content: object) {
+	public unsubscribeJson(topic: string, fn: (message: object, topic: string) => void) {
+		return this.unsubscribe(topic, (message, topic) =>
+			fn(JSON.parse(message.getBinaryAttachment() as string), topic)
+		);
+	}
+
+	public async publish(topic: string, content: string) {
 		await this.ready;
 
 		const message = solace.SolclientFactory.createMessage();
 
 		message.setDestination(solace.SolclientFactory.createTopicDestination(topic));
-		message.setBinaryAttachment(JSON.stringify(content));
+		message.setBinaryAttachment(content);
 		message.setDeliveryMode(solace.MessageDeliveryModeType.DIRECT);
 
 		this.session.send(message);
+	}
+
+	public async publishJson(topic: string, content: object) {
+		await this.publish(topic, JSON.stringify(content));
 	}
 }

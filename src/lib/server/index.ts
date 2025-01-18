@@ -5,7 +5,7 @@ import { document } from './db/schema';
 import { eq, sql } from 'drizzle-orm';
 
 client.subscribe(
-	'95ers/document/*/update',
+	'95ers/document/*/send',
 	async ({ action, userId }: WrappedAction, topic: string) => {
 		const id = topic.split('/')[2];
 
@@ -27,5 +27,11 @@ client.subscribe(
 				})
 				.where(eq(document.id, id));
 		}
+
+		// Notify all subscribers of the change
+		client.publish(`95ers/document/${id}/update`, {
+			userId,
+			action
+		});
 	}
 );
