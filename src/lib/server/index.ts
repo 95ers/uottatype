@@ -4,6 +4,7 @@ import { db } from './db';
 import { document } from './db/schema';
 import { eq, sql } from 'drizzle-orm';
 import type { FileLike } from 'groq-sdk/uploads';
+import fs from 'fs';
 
 solace.subscribeJson(
 	'95ers/document/*/send',
@@ -14,6 +15,10 @@ solace.subscribeJson(
 
 		await db.transaction(async (db) => {
 			const [doc] = await db.select().from(document).for('update').where(eq(document.id, id));
+
+			if (!doc) {
+				return;
+			}
 
 			for (const update of updates) {
 				if (update.type === 'insert') {
@@ -43,24 +48,28 @@ solace.subscribeJson(
 	}
 );
 
-solace.subscribe('95ers/document/*/transcribe/*', async (message, topic) => {
+solace.subscribe('95ers/document/*/transcribe', async (message, topic) => {
 	const userId = message.getUserData();
-	const [docId, _, lang] = topic.split('/').slice(2);
+	const [docId] = topic.split('/').slice(2);
 
 	const bytes = message.getBinaryAttachment() as Uint8Array;
 	const blob = new Blob([bytes], {
-		type: 'audio/m4a'
+		type: 'audio/webm; codecs=opus'
 	}) as unknown as FileLike;
 
+	// @ts-expect-error - ok
 	blob.lastModified = Date.now();
-	blob.name = `transcription-${docId}-${lang}.m4a`;
+	// @ts-expect-error - ok
+	blob.name = `transcription-${docId}-${userId}.mp3`;
 
-	const response = await groq.audio.transcriptions.create({
-		file: blob,
-		model: 'whisper-large-v3-turbo',
-		response_format: 'json',
-		language: lang
-	});
+	try {
+		const response = await groq.audio.transcriptions.create({
+			file: blob,
+			model: 'whisper-large-v3-turbo'
+		});
 
-	console.log('[TRANSCRIPTION]', response.text);
+		console.log('[TRANSCRIPTION]', response.text);
+	} catch (e) {
+		console.log(e);
+	}
 });

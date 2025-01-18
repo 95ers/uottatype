@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
 	import { solace } from '$lib/client';
 
 	$effect(() => {
@@ -9,53 +8,47 @@
 	async function requestMedia() {
 		try {
 			const stream = await navigator.mediaDevices.getUserMedia({
-				audio: true,
-				video: true
+				audio: true
 			});
 
-			const audioTracks = stream.getAudioTracks();
-			const videoTracks = stream.getVideoTracks();
+			audio = new MediaRecorder(stream, {
+				audioBitsPerSecond: 16_000
+			});
 
-			audio = new MediaRecorder(new MediaStream([audioTracks[0]]));
-			video = new MediaRecorder(new MediaStream([videoTracks[0]]));
+			audio.ondataavailable = async (event) => {
+				chunks.push(event.data);
+
+				if (!recording) {
+					const blob = new Blob(chunks, { type: event.data.type });
+					const buf = await blob.arrayBuffer();
+
+					console.log(blob);
+
+					solace.publish(`95ers/document/someid/transcribe`, buf, '123');
+				}
+			};
 		} catch (error) {
 			console.error(error);
 		}
 	}
 
 	let audio = $state<MediaRecorder | null>(null);
-	let video = $state<MediaRecorder | null>(null);
 	let recording = $state(false);
 
+	let chunks: Blob[] = [];
+
 	$effect(() => {
-		if (!browser) return;
-
 		requestMedia();
-
-		if (!audio || !video) return;
-
-		audio.ondataavailable = async (event) => {
-			const blob = new Blob([event.data], { type: 'audio/webm' });
-
-			solace.publish(
-				`95ers/document/someid/user/userid/transcribe/language`,
-				await blob.arrayBuffer()
-			);
-		};
 	});
 
-	function onClick() {
+	async function onClick() {
 		if (!audio) return;
 
-		console.log(audio.state);
-
 		if (recording) {
-			audio.requestData();
 			audio.stop();
 			recording = false;
 		} else {
 			audio.start();
-			console.log('state', audio.state);
 			recording = true;
 		}
 	}

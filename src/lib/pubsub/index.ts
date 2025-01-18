@@ -2,7 +2,7 @@ import EventEmitter from 'eventemitter3';
 import solace from 'solclientjs';
 
 const factory = new solace.SolclientFactoryProperties();
-factory.profile = solace.SolclientFactoryProfiles.version10;
+factory.profile = solace.SolclientFactoryProfiles.version10_5;
 
 solace.SolclientFactory.init(factory);
 
