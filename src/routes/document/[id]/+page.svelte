@@ -11,13 +11,16 @@
 
 	let editor: Wysiwyg;
 	let listener;
+	let titleListener;
 
 	$effect(() => {
 		listener = solace.subscribeJson(`${topic}/update`, onUpdate);
+		titleListener = solace.subscribeJson(`${topic}/title`, onTitle);
 	});
 
 	onDestroy(() => {
 		solace.unsubscribeJson(`${topic}/update`, listener);
+		solace.unsubscribeJson(`${topic}/title`, titleListener);
 	});
 
 	async function onUpdate({ action, userId }: Authenticated<Updates>) {
@@ -26,10 +29,23 @@
 		editor.applyUpdates(action);
 	}
 
+	async function onTitle({ action, userId }: Authenticated<string>) {
+		if (userId === data.user.id) return;
+
+		editor.setTitle(action);
+	}
+
 	async function onContentUpdate(action: Updates) {
 		solace.publishJson(`${topic}/send`, {
 			userId: data.user.id,
 			action
+		});
+	}
+
+	async function onTitleUpdate(title: string) {
+		solace.publishJson(`${topic}/title`, {
+			userId: data.user.id,
+			action: title
 		});
 	}
 
@@ -51,6 +67,7 @@
 <Wysiwyg
 	bind:this={editor}
 	{onContentUpdate}
+	{onTitleUpdate}
 	{onUserAdd}
 	document={data.doc}
 	userId={data.user.id}

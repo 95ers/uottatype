@@ -23,11 +23,13 @@
 
 	let {
 		onContentUpdate,
+		onTitleUpdate,
 		onUserAdd,
 		document: doc,
 		userId
 	}: {
 		onContentUpdate: (updates: Updates) => void;
+		onTitleUpdate: (title: string) => void;
 		onUserAdd: (username: string) => void;
 		document: Document;
 		userId: string;
@@ -58,6 +60,10 @@
 		} else if (el.currentStyle) {
 			return el.currentStyle[propName];
 		}
+	}
+
+	export function setTitle(t: string) {
+		title = t;
 	}
 
 	function reportColourAndFontSize() {
@@ -146,8 +152,17 @@
 
 	const onInput = () => {
 		clearInterval(lastInputInterval);
-		lastInputInterval = setTimeout(captureUpdate, 100);
+		lastInputInterval = setTimeout(captureUpdate, 50);
 	};
+
+	let lastTitleInterval: number;
+
+	$effect(() => {
+		clearInterval(lastTitleInterval);
+		lastTitleInterval = setTimeout(() => {
+			onTitleUpdate(title);
+		}, 200);
+	});
 
 	let addUserOpen = $state(false);
 	let addUserUsername = $state('');
@@ -239,5 +254,6 @@
 		class="mx-16 h-screen min-h-[150px] w-full max-w-5xl rounded border bg-white p-4 focus:outline-none"
 		bind:innerHTML={editorContent}
 		oninput={onInput}
+		spellcheck="false"
 	></div>
 </div>
