@@ -22,9 +22,9 @@
 				<div class="relative">
 					<Input type="text" placeholder="Search" class="w-64 py-2  " />
 				</div>
-				<Button>Login</Button>
+				<Button>Logout</Button>
 				<Avatar>
-					<AvatarImage src="https://github.com/shadcn.png" alt="User" />
+					<AvatarImage src="https://github.com/vasiltop.png" alt="User" />
 					<AvatarFallback>CN</AvatarFallback>
 				</Avatar>
 			</div>
