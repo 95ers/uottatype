@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { solace } from '$lib/client';
 
 	$effect(() => {
@@ -27,6 +28,10 @@
 	let recording = $state(false);
 
 	$effect(() => {
+		if (!browser) return;
+
+		requestMedia();
+
 		if (!audio || !video) return;
 
 		audio.ondataavailable = async (event) => {
@@ -42,12 +47,15 @@
 	function onClick() {
 		if (!audio) return;
 
+		console.log(audio.state);
+
 		if (recording) {
 			audio.requestData();
 			audio.stop();
 			recording = false;
 		} else {
 			audio.start();
+			console.log('state', audio.state);
 			recording = true;
 		}
 	}
@@ -56,17 +64,3 @@
 <button onclick={onClick} disabled={audio === null}>
 	{recording ? 'Stop Recording' : 'Start Recording'}
 </button>
-
-{#each audio as track}
-	<div>
-		<p>{track.label}</p>
-		<p>{track.readyState}</p>
-	</div>
-{/each}
-
-{#each video as track}
-	<div>
-		<p>{track.label}</p>
-		<p>{track.readyState}</p>
-	</div>
-{/each}

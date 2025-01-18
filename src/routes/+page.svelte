@@ -3,6 +3,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Avatar, AvatarImage, AvatarFallback } from '$lib/components/ui/avatar';
 	import type { PageServerData } from './$types';
+	import { enhance } from '$app/forms';
 
 	let { data }: { data: PageServerData } = $props();
 </script>
@@ -22,7 +23,9 @@
 				<div class="relative">
 					<Input type="text" placeholder="Search" class="w-64 py-2  " />
 				</div>
-				<Button>Logout</Button>
+				<form method="post" action="?/logout" use:enhance>
+					<Button type="submit">Sign out</Button>
+				</form>
 				<Avatar>
 					<AvatarImage src="https://github.com/vasiltop.png" alt="User" />
 					<AvatarFallback>CN</AvatarFallback>

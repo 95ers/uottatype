@@ -61,4 +61,6 @@ solace.subscribe('95ers/document/*/transcribe/*', async (message, topic) => {
 		response_format: 'json',
 		language: lang
 	});
+
+	console.log('[TRANSCRIPTION]', response.text);
 });
