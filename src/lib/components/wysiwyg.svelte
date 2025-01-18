@@ -22,6 +22,7 @@
 		UserPlus
 	} from 'lucide-svelte';
 	import Recorder from './recorder.svelte';
+	import ImageCapture from './image-capture.svelte';
 
 	let {
 		onContentUpdate,
@@ -288,6 +289,8 @@
 		</Button>
 
 		<div class="ml-auto"></div>
+
+		<ImageCapture></ImageCapture>
 
 		<Recorder id={doc.id} {userId} />
 
