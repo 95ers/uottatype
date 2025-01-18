@@ -12,12 +12,7 @@
 	<header class="bg-white shadow-sm">
 		<div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
 			<div class="flex items-center">
-				<img
-					src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png"
-					alt="Google Docs"
-					class="mr-2 h-8 w-8"
-				/>
-				<h1 class="text-xl font-semibold text-gray-800">UOtta9to5</h1>
+				<h1 class="text-xl font-semibold text-gray-800">uOtta9to5</h1>
 			</div>
 			<div class="flex items-center space-x-4">
 				<div class="relative">
@@ -42,16 +37,12 @@
 			</form>
 		</div>
 
-		<div class="grid grid-cols-1 gap-6 pt-16 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+			{#if !data.myDocs.length}
+				<p class="text-gray-800">You have not created any documents.</p>
+			{/if}
 			{#each data.myDocs as doc}
-				<a href={`/document/${doc.id}`}>
-					<div
-						class="rounded-lg bg-white p-4 shadow-md transition-shadow duration-200 hover:shadow-lg"
-					>
-						<h3 class="mb-1 text-lg font-medium text-gray-800">{doc.title}</h3>
-						<p class="text-sm text-gray-500">Created At: {doc.createdAt}</p>
-					</div>
-				</a>
+				{@render document(doc)}
 			{/each}
 		</div>
 
@@ -60,16 +51,28 @@
 		</div>
 
 		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+			{#if !data.sharedDocs.length}
+				<p class="text-gray-800">You have not been invited to any documents.</p>
+			{/if}
 			{#each data.sharedDocs as doc}
-				<a href={`/document/${doc.id}`}>
-					<div
-						class="rounded-lg bg-white p-4 shadow-md transition-shadow duration-200 hover:shadow-lg"
-					>
-						<h3 class="mb-1 text-lg font-medium text-gray-800">{doc.title}</h3>
-						<p class="text-sm text-gray-500">Created At: {doc.createdAt}</p>
-					</div>
-				</a>
+				{@render document(doc)}
 			{/each}
 		</div>
 	</main>
 </div>
+
+{#snippet document(doc: any)}
+	<a href={`/document/${doc.id}`}>
+		<div class="bg-white p-4 shadow-md transition-shadow duration-200 hover:shadow-lg">
+			<h3 class="mx-1 mb-1 text-lg font-medium">{doc.title}</h3>
+			<div class="flex">
+				<img
+					src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png"
+					alt="Google Docs"
+					class="mr-2 h-8 w-8"
+				/>
+				<p class="text-sm text-gray-500">Created: {doc.createdAt.toUTCString()}</p>
+			</div>
+		</div>
+	</a>
+{/snippet}
