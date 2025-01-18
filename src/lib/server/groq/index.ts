@@ -1,5 +1,5 @@
 import { groq } from '$lib/client';
-import fs from 'fs';
+import fs from 'node:fs';
 
 export async function getGroqChatCompletion() {
 	return await client.chat.completions.create({

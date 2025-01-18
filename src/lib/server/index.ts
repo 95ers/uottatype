@@ -4,7 +4,7 @@ import { db } from './db';
 import { document } from './db/schema';
 import { eq, sql } from 'drizzle-orm';
 import type { FileLike } from 'groq-sdk/uploads';
-import fs from 'fs';
+import fs from 'node:fs';
 
 solace.subscribeJson(
 	'95ers/document/*/send',
@@ -79,4 +79,3 @@ solace.subscribe('95ers/document/*/transcribe', async (message, topic) => {
 		fs.unlinkSync(name);
 	}
 });
-
