@@ -5,18 +5,17 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
-	
+
 	let picture;
 
 	const onFileChange = (e) => {
-		let image = e.target.files.[0];
+		let image = e.target.files[0];
 		let reader = new FileReader();
 		reader.readAsDataURL(image);
-		reader.onload = e => {
-            avatar = e.target.result
-    };
-	}
-
+		reader.onload = (e) => {
+			avatar = e.target.result;
+		};
+	};
 </script>
 
 <Dialog.Root>
