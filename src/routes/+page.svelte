@@ -39,14 +39,33 @@
 			</form>
 		</div>
 
+		<div class="grid grid-cols-1 gap-6 pt-16 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+			{#each data.myDocs as doc}
+				<a href={`/document/${doc.id}`}>
+					<div
+						class="rounded-lg bg-white p-4 shadow-md transition-shadow duration-200 hover:shadow-lg"
+					>
+						<h3 class="mb-1 text-lg font-medium text-gray-800">{doc.title}</h3>
+						<p class="text-sm text-gray-500">Created At: {doc.createdAt}</p>
+					</div>
+				</a>
+			{/each}
+		</div>
+
+		<div class="mb-6 flex items-center justify-between pt-16">
+			<h2 class="text-2xl font-semibold text-gray-800">Shared with me</h2>
+		</div>
+
 		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-			{#each data.docs as doc}
-				<div
-					class="rounded-lg bg-white p-4 shadow-md transition-shadow duration-200 hover:shadow-lg"
-				>
-					<h3 class="mb-1 text-lg font-medium text-gray-800">{doc.document.title}</h3>
-					<p class="text-sm text-gray-500">Created At: {doc.document.createdAt}</p>
-				</div>
+			{#each data.sharedDocs as doc}
+				<a href={`/document/${doc.id}`}>
+					<div
+						class="rounded-lg bg-white p-4 shadow-md transition-shadow duration-200 hover:shadow-lg"
+					>
+						<h3 class="mb-1 text-lg font-medium text-gray-800">{doc.title}</h3>
+						<p class="text-sm text-gray-500">Created At: {doc.createdAt}</p>
+					</div>
+				</a>
 			{/each}
 		</div>
 	</main>

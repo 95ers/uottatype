@@ -29,5 +29,5 @@ export const load: PageServerLoad = async (event) => {
 		return error(403);
 	}
 
-	return { doc };
+	return { doc, user: event.locals.user! };
 };
