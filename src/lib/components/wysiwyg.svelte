@@ -24,7 +24,7 @@
 	let {
 		onContentUpdate,
 		onUserAdd,
-		document,
+		document: doc,
 		userId
 	}: {
 		onContentUpdate: (updates: Updates) => void;
@@ -33,7 +33,8 @@
 		userId: string;
 	} = $props();
 
-	let editorContent = $state(document.content);
+	let title = $state(doc.title);
+	let editorContent = $state(doc.content);
 	let previousContent = untrack(() => editorContent);
 	let editorElement: HTMLDivElement;
 
@@ -179,7 +180,7 @@
 
 <div class="flex w-full flex-col items-center bg-gray-50">
 	<div class="mx-16 mt-8 flex w-full max-w-5xl p-1">
-		<Input class="border-none bg-gray-50 text-2xl" value={document.title} />
+		<Input class="border-none bg-gray-50 text-2xl" bind:value={title} />
 	</div>
 	<div class="mx-16 my-6 flex w-full max-w-5xl gap-2 p-1">
 		<Button variant="secondary" onclick={() => executeCommand('bold')}>
@@ -220,7 +221,7 @@
 
 		<div class="ml-auto"></div>
 
-		<Recorder id={document.id} {userId} />
+		<Recorder id={doc.id} {userId} />
 
 		<Button
 			onclick={() => {

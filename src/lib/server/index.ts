@@ -53,22 +53,17 @@ solace.subscribe('95ers/document/*/transcribe', async (message, topic) => {
 	const [docId] = topic.split('/').slice(2);
 
 	const bytes = message.getBinaryAttachment() as Uint8Array;
-	const blob = new Blob([bytes], {
-		type: 'audio/webm; codecs=opus'
-	}) as unknown as FileLike;
+	const name = `audio/transcription-${docId}-${userId}-${Date.now()}.webm`;
 
-	// @ts-expect-error - ok
-	blob.lastModified = Date.now();
-	// @ts-expect-error - ok
-	blob.name = `transcription-${docId}-${userId}.mp3`;
+	fs.writeFileSync(name, bytes);
 
 	try {
 		const response = await groq.audio.transcriptions.create({
-			file: blob,
+			file: fs.createReadStream(name),
 			model: 'whisper-large-v3-turbo'
 		});
 
-		solace.publishJson(`95ers/document/${docId}/update`, {
+		solace.publishJson(`95ers/document/${docId}/send`, {
 			userId: 'system',
 			action: [
 				{
@@ -79,6 +74,8 @@ solace.subscribe('95ers/document/*/transcribe', async (message, topic) => {
 			]
 		});
 	} catch (e) {
-		console.log(e);
+		console.error(e);
+	} finally {
+		fs.unlinkSync(name);
 	}
 });
