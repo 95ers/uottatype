@@ -2,14 +2,9 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Avatar, AvatarImage, AvatarFallback } from '$lib/components/ui/avatar';
+	import type { PageServerData } from './$types';
 
-	let documents = [
-		{ id: 1, title: 'Untitled Document', lastModified: 'Apr 22, 2023' },
-		{ id: 2, title: 'Project Proposal', lastModified: 'May 15, 2023' },
-		{ id: 3, title: 'Meeting Notes', lastModified: 'Jun 3, 2023' },
-		{ id: 4, title: 'Budget Report', lastModified: 'Jun 10, 2023' },
-		{ id: 5, title: 'Marketing Plan', lastModified: 'Jun 18, 2023' }
-	];
+	let { data }: { data: PageServerData } = $props();
 </script>
 
 <div class="min-h-screen bg-gray-100">
@@ -39,16 +34,18 @@
 	<main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
 		<div class="mb-6 flex items-center justify-between">
 			<h2 class="text-2xl font-semibold text-gray-800">My Documents</h2>
-			<Button variant="default" class="flex items-center">New Document</Button>
+			<form method="POST" action="?/createDocument">
+				<Button type="submit" variant="default" class="flex items-center">New Document</Button>
+			</form>
 		</div>
 
 		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-			{#each documents as doc}
+			{#each data.docs as doc}
 				<div
 					class="rounded-lg bg-white p-4 shadow-md transition-shadow duration-200 hover:shadow-lg"
 				>
-					<h3 class="mb-1 text-lg font-medium text-gray-800">{doc.title}</h3>
-					<p class="text-sm text-gray-500">Last modified: {doc.lastModified}</p>
+					<h3 class="mb-1 text-lg font-medium text-gray-800">{doc.document.title}</h3>
+					<p class="text-sm text-gray-500">Created At: {doc.document.createdAt}</p>
 				</div>
 			{/each}
 		</div>
