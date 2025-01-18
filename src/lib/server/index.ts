@@ -1,4 +1,4 @@
-import { groq, solace } from '$lib/client';
+import { groq, solace } from '$lib/server/client';
 import type { WrappedAction } from '$lib';
 import { db } from './db';
 import { document } from './db/schema';
