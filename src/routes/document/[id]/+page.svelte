@@ -46,6 +46,7 @@
 			body: params
 		});
 	}
+	data.doc;
 </script>
 
-<Wysiwyg bind:this={editor} {onContentUpdate} {onUserAdd} initialContent={data.doc.content} />
+<Wysiwyg bind:this={editor} {onContentUpdate} {onUserAdd} document={data.doc} />

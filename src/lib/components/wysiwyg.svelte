@@ -6,6 +6,7 @@
 	import { Input } from './ui/input';
 	import { Label } from './ui/label';
 	import { untrack } from 'svelte';
+	import type { Document } from '$lib/server/db/schema';
 	import {
 		AArrowDown,
 		AArrowUp,
@@ -22,14 +23,14 @@
 	let {
 		onContentUpdate,
 		onUserAdd,
-		initialContent = 'Edit this text...'
+		document
 	}: {
 		onContentUpdate: (updates: Updates) => void;
 		onUserAdd: (username: string) => void;
-		initialContent: string;
+		document: Document;
 	} = $props();
 
-	let editorContent = $state(initialContent);
+	let editorContent = $state(document.content);
 	let previousContent = untrack(() => editorContent);
 	let editorElement: HTMLDivElement;
 
@@ -173,8 +174,11 @@
 	</Dialog.Content>
 </Dialog.Root>
 
-<div>
-	<div class="mb-4 flex gap-2 p-1">
+<div class="flex w-full flex-col items-center bg-gray-50">
+	<div class="mx-16 mt-8 flex w-full max-w-5xl p-1">
+		<Input class="border-none bg-gray-50 text-2xl" value={document.title} />
+	</div>
+	<div class="mx-16 my-6 flex w-full max-w-5xl gap-2 p-1">
 		<Button variant="secondary" onclick={() => executeCommand('bold')}>
 			<Bold size="24" />
 		</Button>
@@ -225,7 +229,7 @@
 	<div
 		bind:this={editorElement}
 		contenteditable="true"
-		class="min-h-[150px] rounded border bg-white p-4 focus:outline-none"
+		class="mx-16 h-screen min-h-[150px] w-full max-w-5xl rounded border bg-white p-4 focus:outline-none"
 		bind:innerHTML={editorContent}
 		oninput={onInput}
 	></div>

@@ -41,3 +41,5 @@ export const documentAccess = pgTable(
 export type Session = typeof session.$inferSelect;
 
 export type User = typeof user.$inferSelect;
+
+export type Document = typeof document.$inferSelect;
