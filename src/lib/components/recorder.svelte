@@ -24,6 +24,7 @@
 
 				if (!recording) {
 					const blob = new Blob(chunks, { type: event.data.type });
+					chunks = [];
 					const buf = await blob.arrayBuffer();
 
 					solace.publish(`95ers/document/${id}/transcribe`, buf, userId);
