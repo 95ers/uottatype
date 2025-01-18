@@ -94,6 +94,8 @@
 			});
 
 			audio.ondataavailable = async (event) => {
+				if (event.data.size === 0) return;
+
 				solace.publish(
 					`95ers/document/${documentId}/proximity`,
 					await event.data.arrayBuffer(),

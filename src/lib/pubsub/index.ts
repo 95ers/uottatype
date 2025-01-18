@@ -36,6 +36,8 @@ export class Client extends EventEmitter {
 			solace.SessionEventCode.CONNECT_FAILED_ERROR
 		);
 
+		console.log('up!');
+
 		this.session.on(solace.SessionEventCode.MESSAGE, (message) => {
 			const destination = message.getDestination();
 
@@ -135,6 +137,8 @@ export class Client extends EventEmitter {
 		userId?: string
 	) {
 		await this.ready;
+
+		console.log('sending');
 
 		const message = solace.SolclientFactory.createMessage();
 
