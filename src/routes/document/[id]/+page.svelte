@@ -3,7 +3,7 @@
 	import type { PageServerData } from './$types';
 
 	let { data }: { data: PageServerData } = $props();
-	import { client } from '$lib/solace';
+	import { solace } from '$lib/client';
 	import { onDestroy } from 'svelte';
 	import Wysiwyg from '$lib/components/wysiwyg.svelte';
 
@@ -12,11 +12,11 @@
 	let editor: Wysiwyg;
 
 	$effect(() => {
-		client.subscribe(topic, onUpdate);
+		solace.subscribe(topic, onUpdate);
 	});
 
 	onDestroy(() => {
-		client.unsubscribe(topic, onUpdate);
+		solace.unsubscribe(topic, onUpdate);
 	});
 
 	async function onUpdate({ action, userId }: Authenticated<Updates>) {
@@ -26,7 +26,7 @@
 	}
 
 	async function onContentUpdate(action: Updates) {
-		client.publish(topic, {
+		solace.publishJson(topic, {
 			userId: data.user.id,
 			action
 		});

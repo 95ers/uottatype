@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { client } from '$lib/solace';
+	import { solace } from '$lib/client';
 
 	$effect(() => {
 		requestMedia();
@@ -32,7 +32,7 @@
 		audio.ondataavailable = async (event) => {
 			const blob = new Blob([event.data], { type: 'audio/webm' });
 
-			client.publish(
+			solace.publish(
 				`95ers/document/someid/user/userid/transcribe/language`,
 				await blob.arrayBuffer()
 			);
