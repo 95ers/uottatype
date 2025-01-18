@@ -1,9 +1,5 @@
-import Groq from 'groq-sdk';
+import { groq } from '$lib/client';
 import fs from 'fs';
-
-const client = new Groq({
-	apiKey: process.env['GROQ_API_KEY'] // This is the default and can be omitted
-});
 
 export async function getGroqChatCompletion() {
 	return await client.chat.completions.create({
@@ -13,7 +9,7 @@ export async function getGroqChatCompletion() {
 }
 
 export async function getGroqAudioTranscription() {
-	const transcription = await client.audio.transcriptions.create({
+	const transcription = await groq.audio.transcriptions.create({
 		file: fs.createReadStream('sample_audio.m4a'), // Required path to audio file - replace with your audio file!
 		model: 'whisper-large-v3-turbo', // Required model to use for transcription
 		response_format: 'json', // Optional

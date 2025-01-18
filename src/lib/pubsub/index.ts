@@ -48,9 +48,11 @@ export class Client extends EventEmitter {
 				const parts = name.split('/');
 
 				for (let i = 0; i < parts.length; i++) {
-					const wildcard = parts.map((_, j) => (j !== i ? parts[j] : '*')).join('/');
+					for (let j = 0; j < i; j++) {
+						const path = parts.map((_, k) => (k === i || k === j ? '*' : parts[k])).join('/');
 
-					this.emit(wildcard, JSON.parse(message.getBinaryAttachment() as string), name);
+						this.emit(path, JSON.parse(message.getBinaryAttachment() as string), name);
+					}
 				}
 			}
 		});
@@ -129,12 +131,21 @@ export class Client extends EventEmitter {
 		);
 	}
 
-	public async publish(topic: string, content: string) {
+	public async publish(
+		topic: string,
+		content: string | Uint8Array | ArrayBufferLike,
+		userId?: string
+	) {
 		await this.ready;
 
 		const message = solace.SolclientFactory.createMessage();
 
 		message.setDestination(solace.SolclientFactory.createTopicDestination(topic));
+
+		if (userId) {
+			message.setUserData(userId);
+		}
+
 		message.setBinaryAttachment(content);
 		message.setDeliveryMode(solace.MessageDeliveryModeType.DIRECT);
 

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { client } from '$lib/solace';
+
 	$effect(() => {
 		requestMedia();
 	});
@@ -22,10 +24,19 @@
 
 	let audio = $state<MediaRecorder | null>(null);
 	let video = $state<MediaRecorder | null>(null);
-	let recording = false;
+	let recording = $state(false);
 
 	$effect(() => {
 		if (!audio || !video) return;
+
+		audio.ondataavailable = async (event) => {
+			const blob = new Blob([event.data], { type: 'audio/webm' });
+
+			client.publish(
+				`95ers/document/someid/user/userid/transcribe/language`,
+				await blob.arrayBuffer()
+			);
+		};
 	});
 
 	function onClick() {
@@ -42,7 +53,7 @@
 	}
 </script>
 
-<button onclick={onClick} disabled={recorder === null}>
+<button onclick={onClick} disabled={audio === null}>
 	{recording ? 'Stop Recording' : 'Start Recording'}
 </button>
 
