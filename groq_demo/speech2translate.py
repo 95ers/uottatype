@@ -5,7 +5,7 @@ from groq import Groq
 
 
 client = Groq(
-    api_key= ###env var api key or put here for testing,
+    api_key= "" ###env var api key or put here for testing,
 )
 
 filename = #filepath here #find library record audio and put it here, use wake word or button to do so
