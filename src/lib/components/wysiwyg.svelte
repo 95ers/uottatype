@@ -6,7 +6,18 @@
 	import { Input } from './ui/input';
 	import { Label } from './ui/label';
 	import { untrack } from 'svelte';
-	import { Link } from 'lucide-svelte';
+	import {
+		AArrowDown,
+		AArrowUp,
+		AlignCenter,
+		AlignLeft,
+		AlignRight,
+		Bold,
+		Italic,
+		Link,
+		Underline,
+		UserPlus
+	} from 'lucide-svelte';
 
 	let {
 		onContentUpdate,
@@ -36,12 +47,60 @@
 		previousContent = editorContent;
 	}
 
+	function getComputedStyleProperty(el: Node | ParentNode, propName: string) {
+		if (window.getComputedStyle) {
+			return window.getComputedStyle(el, null)[propName];
+		} else if (el.currentStyle) {
+			return el.currentStyle[propName];
+		}
+	}
+
+	function reportColourAndFontSize() {
+		let containerEl: Node | ParentNode | null;
+		let sel: Selection | null;
+		if (window.getSelection) {
+			sel = window.getSelection();
+			if (sel?.rangeCount) {
+				containerEl = sel.getRangeAt(0).commonAncestorContainer;
+				// Make sure we have an element rather than a text node
+				if (containerEl.nodeType == 3) {
+					containerEl = containerEl.parentNode;
+				}
+			}
+		} else if ((sel = document.selection) && sel.type != 'Control') {
+			containerEl = sel.createRange().parentElement();
+		}
+
+		if (containerEl) {
+			var fontSize = getComputedStyleProperty(containerEl, 'fontSize');
+			var colour = getComputedStyleProperty(containerEl, 'color');
+
+			return fontSize;
+		}
+	}
+
 	/**
 	 * Executes a command on the editor.
 	 * @param {string} command - The command to execute.
 	 * @param {string | null} value - Optional value for the command.
 	 */
 	const executeCommand = (command: string, value?: string) => {
+		if (command === 'fontSize') {
+			const fontSize = document.queryCommandValue('FontSize');
+
+			if (fontSize) {
+				const currentFontSize = parseInt(fontSize);
+
+				if (value === '1') {
+					value = (currentFontSize + 1).toString();
+				} else if (value === '-1') {
+					value = (currentFontSize - 1).toString();
+				}
+			} else {
+				value = '3';
+			}
+		}
+
 		document.execCommand(command, false, value);
 		captureUpdate();
 	};
@@ -116,54 +175,50 @@
 
 <div>
 	<div class="mb-4 flex gap-2 p-1">
-		<button
-			type="button"
-			onclick={() => executeCommand('bold')}
-			class="rounded border bg-gray-100 px-3 py-1 hover:bg-gray-200"
-		>
-			<b>B</b>
-		</button>
-		<button
-			type="button"
-			onclick={() => executeCommand('italic')}
-			class="rounded border bg-gray-100 px-3 py-1 hover:bg-gray-200"
-		>
-			<i>I</i>
-		</button>
-		<button
-			type="button"
-			onclick={() => executeCommand('underline')}
-			class="rounded border bg-gray-100 px-3 py-1 hover:bg-gray-200"
-		>
-			<u>U</u>
-		</button>
-		<button
-			type="button"
-			onclick={() => executeCommand('insertOrderedList')}
-			class="rounded border bg-gray-100 px-3 py-1 hover:bg-gray-200"
-		>
-			OL
-		</button>
-		<button
-			type="button"
-			onclick={() => executeCommand('insertUnorderedList')}
-			class="rounded border bg-gray-100 px-3 py-1 hover:bg-gray-200"
-		>
-			UL
-		</button>
-		<button
-			type="button"
-			onclick={() => executeCommand('createLink', prompt('Enter URL'))}
-			class="rounded border bg-gray-100 px-3 py-1 hover:bg-gray-200"
-		>
-		</button>
+		<Button variant="secondary" onclick={() => executeCommand('bold')}>
+			<Bold size="24" />
+		</Button>
+
+		<Button variant="secondary" onclick={() => executeCommand('italic')}>
+			<Italic size="24" />
+		</Button>
+
+		<Button variant="secondary" onclick={() => executeCommand('underline')}>
+			<Underline size="24" />
+		</Button>
+
+		<Button variant="secondary" onclick={() => executeCommand('justifyRight')}>
+			<AlignRight size="24" />
+		</Button>
+
+		<Button variant="secondary" onclick={() => executeCommand('justifyCenter')}>
+			<AlignCenter size="24" />
+		</Button>
+
+		<Button variant="secondary" onclick={() => executeCommand('justifyLeft')}>
+			<AlignLeft size="24" />
+		</Button>
+
+		<Button variant="secondary" onclick={() => executeCommand('createLink', prompt('Enter URL'))}>
+			<Link size="24" />
+		</Button>
+
+		<Button variant="secondary" onclick={() => executeCommand('fontSize', '1')}>
+			<AArrowUp size="24" />
+		</Button>
+
+		<Button variant="secondary" onclick={() => executeCommand('fontSize', '-1')}>
+			<AArrowDown size="24" />
+		</Button>
 
 		<Button
 			class="ml-auto"
 			onclick={() => {
 				addUserOpen = true;
-			}}>Add user</Button
+			}}
 		>
+			<UserPlus size="24" />
+		</Button>
 	</div>
 
 	<!-- Editable Content Area -->
