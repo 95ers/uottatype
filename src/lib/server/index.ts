@@ -80,8 +80,3 @@ solace.subscribe('95ers/document/*/transcribe', async (message, topic) => {
 	}
 });
 
-solace.subscribeJson('95ers/doccument/*/message', async (message, topic) => {
-	const [docId] = topic.split('/').slice(2);
-
-	solace.publishJson(`95ers/document/${docId}/messageClient`, message);
-});
