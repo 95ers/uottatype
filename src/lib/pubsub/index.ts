@@ -151,7 +151,11 @@ export class Client extends EventEmitter {
 		message.setBinaryAttachment(content);
 		message.setDeliveryMode(solace.MessageDeliveryModeType.DIRECT);
 
-		this.session.send(message);
+		try {
+			this.session.send(message);
+		} catch (e) {
+			console.error(e);
+		}
 	}
 
 	public async publishJson(topic: string, content: object) {

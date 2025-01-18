@@ -20,8 +20,8 @@
 	}
 
 	type Entry = {
-		mediaSource: MediaSource;
-		sourceBuffer?: SourceBuffer;
+		audioContext: AudioContext;
+		audioNode?: AudioBufferSourceNode;
 		audio: HTMLAudioElement;
 	};
 
@@ -37,14 +37,9 @@
 	onDestroy(() => {
 		solace.unsubscribe(`95ers/document/${documentId}/proximity`, onAudio);
 
-		for (const { mediaSource, sourceBuffer, audio } of sources.values()) {
-			mediaSource.endOfStream();
-
-			if (sourceBuffer) {
-				mediaSource.removeSourceBuffer(sourceBuffer);
-				sourceBuffer.abort();
-			}
-
+		for (const { audioContext, audioNode, audio } of sources.values()) {
+			audioNode?.disconnect();
+			audioContext.close();
 			audio.remove();
 		}
 	});
@@ -55,31 +50,31 @@
 		if (meta.userId === userId) return;
 		if (Math.abs(meta.line - line) > 3) return;
 
-		const buffer = message.getBinaryAttachment();
+		const array = message.getBinaryAttachment() as Uint8Array;
+		const buffer = array.buffer.slice(array.byteOffset, array.byteLength + array.byteOffset);
 
-		// get or create
 		if (!sources.has(meta.userId)) {
-			const mediaSource = new MediaSource();
+			const audioContext = new AudioContext();
 			const audio = new Audio();
-			audio.src = URL.createObjectURL(mediaSource);
 			audio.play();
 
-			const obj = { mediaSource, audio, sourceBuffer: undefined } as Entry;
-
-			mediaSource.addEventListener('sourceopen', () => {
-				const sourceBuffer = mediaSource.addSourceBuffer('audio/webm; codecs=opus');
-				obj.sourceBuffer = sourceBuffer;
-				sourceBuffer.appendBuffer(buffer as Uint8Array);
-			});
-
+			const obj = { audioContext, audio } as Entry;
 			sources.set(meta.userId, obj);
-		} else {
-			const { sourceBuffer } = sources.get(meta.userId)!;
-
-			if (sourceBuffer) {
-				sourceBuffer.appendBuffer(buffer as Uint8Array);
-			}
 		}
+
+		const { audioContext } = sources.get(meta.userId)!;
+
+		// Convert the raw PCM data to an AudioBuffer
+		const rawPCMData = new Float32Array(buffer);
+		const audioBuffer = audioContext.createBuffer(1, rawPCMData.length, audioContext.sampleRate);
+
+		audioBuffer.copyToChannel(rawPCMData, 0);
+
+		// Play the audio buffer
+		const audioNode = audioContext.createBufferSource();
+		audioNode.buffer = audioBuffer;
+		audioNode.connect(audioContext.destination);
+		audioNode.start();
 	}
 
 	async function requestMedia() {
@@ -88,22 +83,23 @@
 				audio: true
 			});
 
-			audio = new MediaRecorder(stream, {
-				audioBitsPerSecond: 32_000,
-				mimeType: 'audio/webm; codecs=opus'
-			});
+			const audioContext = new AudioContext();
+			const source = audioContext.createMediaStreamSource(stream);
+			const processor = audioContext.createScriptProcessor(4096, 1, 1);
 
-			audio.ondataavailable = async (event) => {
-				if (event.data.size === 0) return;
+			source.connect(processor);
+			processor.connect(audioContext.destination);
+
+			processor.onaudioprocess = (event) => {
+				const inputBuffer = event.inputBuffer;
+				const rawData = inputBuffer.getChannelData(0); // Get PCM data
 
 				solace.publish(
 					`95ers/document/${documentId}/proximity`,
-					await event.data.arrayBuffer(),
+					rawData.buffer,
 					JSON.stringify({ userId, line })
 				);
 			};
-
-			audio.start(100);
 
 			return true;
 		} catch (e) {
@@ -111,6 +107,4 @@
 			return false;
 		}
 	}
-
-	let audio = $state<MediaRecorder | null>(null);
 </script>
