@@ -35,9 +35,6 @@ importers:
       groq-sdk:
         specifier: ^0.12.0
         version: 0.12.0
-      lucide-svelte:
-        specifier: ^0.473.0
-        version: 0.473.0(svelte@5.19.0)
       postgres:
         specifier: ^3.4.5
         version: 3.4.5
@@ -90,6 +87,9 @@ importers:
       globals:
         specifier: ^15.14.0
         version: 15.14.0
+      lucide-svelte:
+        specifier: ^0.473.0
+        version: 0.473.0(svelte@5.19.0)
       prettier:
         specifier: ^3.4.2
         version: 3.4.2

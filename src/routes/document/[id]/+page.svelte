@@ -7,30 +7,45 @@
 	import { onDestroy } from 'svelte';
 	import Wysiwyg from '$lib/components/wysiwyg.svelte';
 
-	const topic = `95ers/document/${data.doc.id}/update`;
+	const topic = `95ers/document/${data.doc.id}`;
 
 	let editor: Wysiwyg;
+	let listener;
 
 	$effect(() => {
-		solace.subscribe(topic, onUpdate);
+		listener = solace.subscribeJson(`${topic}/update`, onUpdate);
 	});
 
 	onDestroy(() => {
-		solace.unsubscribe(topic, onUpdate);
+		solace.unsubscribeJson(`${topic}/update`, listener);
 	});
 
 	async function onUpdate({ action, userId }: Authenticated<Updates>) {
 		if (userId === data.user.id) return;
 
-		editor.setSubsliceContent(action.content, action.position, action.position);
+		editor.applyUpdates(action);
 	}
 
 	async function onContentUpdate(action: Updates) {
-		solace.publishJson(topic, {
+		solace.publishJson(`${topic}/send`, {
 			userId: data.user.id,
 			action
 		});
 	}
+
+	async function onUserAdd(username: string) {
+		const params = new URLSearchParams();
+
+		params.append('username', username);
+
+		await fetch(`/document/${data.doc.id}?/addUser`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			},
+			body: params
+		});
+	}
 </script>
 
-<Wysiwyg bind:this={editor} {onContentUpdate} />
+<Wysiwyg bind:this={editor} {onContentUpdate} {onUserAdd} initialContent={data.doc.content} />

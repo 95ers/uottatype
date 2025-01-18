@@ -1,5 +1,5 @@
 import { groq, solace } from '$lib/server/client';
-import type { WrappedAction } from '$lib';
+import type { Authenticated, Updates } from '$lib';
 import { db } from './db';
 import { document } from './db/schema';
 import { eq, sql } from 'drizzle-orm';
@@ -7,32 +7,38 @@ import type { FileLike } from 'groq-sdk/uploads';
 
 solace.subscribeJson(
 	'95ers/document/*/send',
-	async ({ action, userId }: WrappedAction, topic: string) => {
+	async ({ action: updates, userId }: Authenticated<Updates>, topic: string) => {
 		const id = topic.split('/')[2];
 
-		// Update document with id in database
-		if (action.type === 'insert') {
-			// Insert action.content at action.position
+		console.log('start');
+
+		await db.transaction(async (db) => {
+			const [doc] = await db.select().from(document).for('update').where(eq(document.id, id));
+
+			for (const update of updates) {
+				if (update.type === 'insert') {
+					doc.content =
+						doc.content.slice(0, update.index) + update.text + doc.content.slice(update.index);
+				} else if (update.type === 'delete') {
+					doc.content =
+						doc.content.slice(0, update.index) + doc.content.slice(update.index + update.offset);
+				}
+			}
+
+			console.log(doc.content);
+
 			await db
 				.update(document)
 				.set({
-					content: sql<string>`format('%s%s%s', left(content, ${action.position}), ${action.content}::text, right(content, length(content) - ${action.position}))`
+					content: doc.content
 				})
 				.where(eq(document.id, id));
-		} else {
-			// Delete action.content at action.position
-			await db
-				.update(document)
-				.set({
-					content: sql<string>`format('%s%s', left(content, ${action.position}), right(content, length(content) - ${action.position}))`
-				})
-				.where(eq(document.id, id));
-		}
+		});
 
 		// Notify all subscribers of the change
 		solace.publishJson(`95ers/document/${id}/update`, {
 			userId,
-			action
+			action: updates
 		});
 	}
 );

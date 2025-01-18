@@ -34,6 +34,7 @@
 		"eslint-config-prettier": "^10.0.1",
 		"eslint-plugin-svelte": "^2.46.1",
 		"globals": "^15.14.0",
+		"lucide-svelte": "^0.473.0",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.3",
 		"prettier-plugin-tailwindcss": "^0.6.10",
@@ -57,7 +58,6 @@
 		"eventemitter3": "^5.0.1",
 		"fs": "0.0.1-security",
 		"groq-sdk": "^0.12.0",
-		"lucide-svelte": "^0.473.0",
 		"postgres": "^3.4.5",
 		"solclientjs": "^10.17.1"
 	}

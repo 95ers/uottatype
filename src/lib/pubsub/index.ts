@@ -42,16 +42,16 @@ export class Client extends EventEmitter {
 			if (destination) {
 				const name = destination.getName();
 
-				this.emit(name, JSON.parse(message.getBinaryAttachment() as string), name);
+				this.emit(name, message, name);
 
 				// emit with wildcard in each topic path part
 				const parts = name.split('/');
 
 				for (let i = 0; i < parts.length; i++) {
-					for (let j = 0; j < i; j++) {
+					for (let j = i; j < parts.length; j++) {
 						const path = parts.map((_, k) => (k === i || k === j ? '*' : parts[k])).join('/');
 
-						this.emit(path, JSON.parse(message.getBinaryAttachment() as string), name);
+						this.emit(path, message, name);
 					}
 				}
 			}
@@ -126,9 +126,7 @@ export class Client extends EventEmitter {
 	}
 
 	public unsubscribeJson(topic: string, fn: (message: object, topic: string) => void) {
-		return this.unsubscribe(topic, (message, topic) =>
-			fn(JSON.parse(message.getBinaryAttachment() as string), topic)
-		);
+		return this.unsubscribe(topic, fn);
 	}
 
 	public async publish(

@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
-import { document, documentAccess } from '$lib/server/db/schema';
+import type { Actions, PageServerLoad } from './$types';
+import { document, documentAccess, user } from '$lib/server/db/schema';
 import { and, eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 
@@ -31,3 +31,45 @@ export const load: PageServerLoad = async (event) => {
 
 	return { doc, user: event.locals.user! };
 };
+
+export const actions = {
+	addUser: async (event) => {
+		if (!event.locals.user) {
+			return error(403);
+		}
+
+		const documentId = event.params.id;
+
+		const [doc] = await db
+			.select()
+			.from(document)
+			.where(and(eq(document.id, documentId), eq(document.authorId, event.locals.user.id)));
+
+		if (!doc) {
+			return error(403);
+		}
+
+		const form = await event.request.formData();
+		const username = form.get('username') as string;
+
+		if (!username) {
+			return error(400);
+		}
+
+		const [u] = await db
+			.select({
+				id: user.id
+			})
+			.from(user)
+			.where(eq(user.username, username));
+
+		if (!u) {
+			return error(404);
+		}
+
+		await db.insert(documentAccess).values({
+			documentId,
+			userId: u.id
+		});
+	}
+} satisfies Actions;
