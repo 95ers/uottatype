@@ -1,13 +1,27 @@
-<script lang="ts">
-	import type { Action } from '$lib';
+<script module lang="ts">
+	type Addition = {
+		index: number;
+		text: string;
+	};
 
+	type Deletion = {
+		index: number;
+		offset: number;
+	};
+
+	type Updates = Array<Addition | Deletion>;
+</script>
+
+<script lang="ts">
+	import { diffChars } from 'diff';
 	let {
 		onContentUpdate
 	}: {
-		onContentUpdate: (action: Action) => void;
+		onContentUpdate: (updates: Updates) => void;
 	} = $props();
 
-	let editorContent = $state('<p>Edit this text...</p>');
+	let editorContent = $state('Edit this text...');
+	let previousContent = editorContent;
 	let editorElement: HTMLDivElement;
 
 	/**
@@ -46,55 +60,33 @@
 	}
 
 	const captureUpdate = () => {
-		const selection = window.getSelection();
-		const contentText = getTextContent();
-		const action = {
-			type: 'insert', // Default action type
-			content: '',
-			position: 0
-		};
+		console.log(editorContent);
 
-		if (selection?.rangeCount > 0) {
-			const range = selection.getRangeAt(0);
-			action.position = calculateTextOffset(range);
-			action.content = range.toString();
+		let changes = diffChars(previousContent, editorContent);
+		console.log(changes);
+		// when adding new text, we send the index to insert the text inside
+		// when deleting text, we send the index and the amount to delete
 
-			// Detect deletion or addition
-			if (editorContent !== editorElement.innerHTML) {
-				const newContent = editorElement.innerHTML;
-				const oldContent = editorContent;
-
-				if (newContent.length < oldContent.length) {
-					action.type = 'delete';
-					action.content = oldContent.slice(
-						action.position,
-						action.position + (oldContent.length - newContent.length)
-					);
-				} else {
-					action.type = 'insert';
-					action.content = newContent.slice(
-						action.position,
-						action.position + (newContent.length - oldContent.length)
-					);
-				}
+		let updates: Updates = [];
+		let index = 0;
+		for (const change of changes) {
+			if (change.added) {
+				updates.push({
+					index,
+					text: change.value
+				});
+			} else if (change.removed) {
+				updates.push({
+					index,
+					offset: change.count!
+				});
 			}
 
-			// Update internal content and dispatch event
-			editorContent = editorElement.innerHTML;
-			onContentUpdate(action);
+			index += change.count!;
 		}
-	};
 
-	/**
-	 * Calculates the offset of the current selection relative to the start of the editor content.
-	 * @param {Range} range - The current selection range.
-	 * @returns {number} The offset in plain text.
-	 */
-	const calculateTextOffset = (range) => {
-		const preRange = document.createRange();
-		preRange.selectNodeContents(editorElement);
-		preRange.setEnd(range.startContainer, range.startOffset);
-		return preRange.toString().length;
+		onContentUpdate(updates);
+		previousContent = editorContent;
 	};
 
 	/**
