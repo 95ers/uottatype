@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { solace } from '$lib/client';
 	import { Mic, MicOff } from 'lucide-svelte';
+	import { Button } from './ui/button';
 
 	let { id, userId }: { id: string; userId: string } = $props();
 
@@ -59,10 +60,10 @@
 	}
 </script>
 
-<button onclick={onClick} disabled={audio === null}>
+<Button onclick={onClick} disabled={audio === null}>
 	{#if recording}
 		<Mic size={24} />
 	{:else}
 		<MicOff size={24} />
 	{/if}
-</button>
+</Button>

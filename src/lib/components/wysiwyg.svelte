@@ -168,7 +168,7 @@
 	let addUserUsername = $state('');
 </script>
 
-<Dialog.Root open={addUserOpen}>
+<Dialog.Root open={addUserOpen} onOpenChange={(o) => (addUserOpen = o)}>
 	<Dialog.Content class="sm:max-w-[425px]">
 		<Dialog.Header>
 			<Dialog.Title>Add user to document</Dialog.Title>
@@ -185,6 +185,7 @@
 				type="submit"
 				onclick={() => {
 					onUserAdd(addUserUsername);
+					addUserUsername = '';
 					addUserOpen = false;
 				}}
 				disabled={addUserUsername.length === 0}>Add user</Button
