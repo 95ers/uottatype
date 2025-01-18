@@ -19,15 +19,18 @@
 		Underline,
 		UserPlus
 	} from 'lucide-svelte';
+	import Recorder from './recorder.svelte';
 
 	let {
 		onContentUpdate,
 		onUserAdd,
-		document
+		document,
+		userId
 	}: {
 		onContentUpdate: (updates: Updates) => void;
 		onUserAdd: (username: string) => void;
 		document: Document;
+		userId: string;
 	} = $props();
 
 	let editorContent = $state(document.content);
@@ -215,8 +218,11 @@
 			<AArrowDown size="24" />
 		</Button>
 
+		<div class="ml-auto"></div>
+
+		<Recorder id={document.id} {userId} />
+
 		<Button
-			class="ml-auto"
 			onclick={() => {
 				addUserOpen = true;
 			}}

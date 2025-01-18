@@ -68,7 +68,16 @@ solace.subscribe('95ers/document/*/transcribe', async (message, topic) => {
 			model: 'whisper-large-v3-turbo'
 		});
 
-		console.log('[TRANSCRIPTION]', response.text);
+		solace.publishJson(`95ers/document/${docId}/update`, {
+			userId: 'system',
+			action: [
+				{
+					type: 'insert',
+					index: 0,
+					text: response.text
+				}
+			]
+		});
 	} catch (e) {
 		console.log(e);
 	}

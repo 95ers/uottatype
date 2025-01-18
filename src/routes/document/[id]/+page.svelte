@@ -46,7 +46,12 @@
 			body: params
 		});
 	}
-	data.doc;
 </script>
 
-<Wysiwyg bind:this={editor} {onContentUpdate} {onUserAdd} document={data.doc} />
+<Wysiwyg
+	bind:this={editor}
+	{onContentUpdate}
+	{onUserAdd}
+	document={data.doc}
+	userId={data.user.id}
+/>
