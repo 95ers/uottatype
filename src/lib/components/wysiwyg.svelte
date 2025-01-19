@@ -234,15 +234,14 @@
 			cursor.style.zIndex = '1000';
 			cursor.style.pointerEvents = 'none';
 			cursor.style.transition = 'transform 0.1s';
-			cursor.style.top = '0';
-			cursor.style.left = '0';
 			editorWrapper.appendChild(cursor);
 			cursors.set(userId, cursor);
 		}
 
 		console.log(cursor);
 
-		cursor.style.transform = `translate(${x * 100}cqw, ${y * 100}cqh)`;
+		cursor.style.top = `${y * 100}%`;
+		cursor.style.left = `${x * 100}%`;
 	}
 
 	const cursors = new Map<string, HTMLDivElement>();
