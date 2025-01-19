@@ -303,31 +303,14 @@
 </Sheet.Root>
 
 <div class="bg-white p-4">
-	<div class="flex flex-row gap-8">
+	<div class="flex w-full justify-center gap-2 p-1">
 		<Input
-			class="border-none text-2xl focus-visible:ring-white/0"
+			class="max-w-lg border-none text-2xl focus-visible:ring-white/0"
 			bind:value={title}
 			placeholder="Untitled document"
 		/>
 
-		<div class="ml-auto flex flex-row gap-2">
-			<Recorder id={doc.id} userId={user.id} />
-		</div>
-
-		<Button
-			onclick={() => {
-				addUserOpen = true;
-			}}
-			class="ml-auto bg-emerald-500"
-		>
-			<UserPlus size="16" />
-		</Button>
-	</div>
-
-	<div class="flex w-full justify-center gap-2 p-1">
-		<Proximity documentId={doc.id} {user} initialLine={0} bind:this={proxmity} />
-
-		<Button variant="secondary" onclick={() => executeCommand('undo')}>
+		<Button class="ml-auto" variant="secondary" onclick={() => executeCommand('undo')}>
 			<Undo size="16" />
 		</Button>
 
@@ -395,6 +378,21 @@
 				document.execCommand('insertText', false, text);
 			}}
 		></ImageCapture>
+
+		<div class="ml-auto flex w-full max-w-xl flex-row justify-end gap-2">
+			<div class="flex flex-row gap-2">
+				<Recorder id={doc.id} userId={user.id} />
+			</div>
+
+			<Button
+				onclick={() => {
+					addUserOpen = true;
+				}}
+				class="bg-emerald-500"
+			>
+				<UserPlus size="16" />
+			</Button>
+		</div>
 	</div>
 </div>
 
@@ -421,4 +419,6 @@
 			}}
 		></div>
 	</div>
+
+	<Proximity documentId={doc.id} {user} initialLine={0} bind:this={proxmity} />
 </div>
