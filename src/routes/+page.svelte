@@ -6,23 +6,41 @@
 	import { enhance } from '$app/forms';
 
 	let { data }: { data: PageServerData } = $props();
+
+	let searchQuery: string = $state('');
 </script>
 
 <div class="min-h-screen bg-gray-100">
 	<header class="bg-white shadow-sm">
 		<div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-			<div class="flex items-center">
+			<div class="flex items-center justify-center gap-2">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="24"
+					height="24"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="lucide lucide-text"
+					><path d="M17 6.1H3" /><path d="M21 12.1H3" /><path d="M15.1 18H3" /></svg
+				>
 				<h1 class="text-xl font-semibold text-gray-800">uOtta9to5</h1>
 			</div>
 			<div class="flex items-center space-x-4">
 				<div class="relative">
-					<Input type="text" placeholder="Search" class="w-64 py-2  " />
+					<Input type="text" placeholder="Search" class="w-64 py-2" bind:value={searchQuery} />
 				</div>
 				<form method="post" action="?/logout" use:enhance>
 					<Button type="submit">Sign out</Button>
 				</form>
 				<Avatar>
-					<AvatarImage src="https://github.com/vasiltop.png" alt="User" />
+					<AvatarImage
+						src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+						alt="User"
+					/>
 					<AvatarFallback>CN</AvatarFallback>
 				</Avatar>
 			</div>
@@ -41,7 +59,9 @@
 			{#if !data.myDocs.length}
 				<p class="text-gray-800">You have not created any documents.</p>
 			{/if}
-			{#each data.myDocs as doc}
+			{#each data.myDocs.filter((doc) => doc.title
+					.toLowerCase()
+					.includes(searchQuery.toLowerCase())) as doc}
 				{@render document(doc)}
 			{/each}
 		</div>
@@ -54,7 +74,9 @@
 			{#if !data.sharedDocs.length}
 				<p class="text-gray-800">You have not been invited to any documents.</p>
 			{/if}
-			{#each data.sharedDocs as doc}
+			{#each data.sharedDocs.filter((doc) => doc.title
+					.toLowerCase()
+					.includes(searchQuery.toLowerCase())) as doc}
 				{@render document(doc)}
 			{/each}
 		</div>
