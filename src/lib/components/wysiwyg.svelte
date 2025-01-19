@@ -147,6 +147,8 @@
 	let lastTitleInterval: number;
 
 	$effect(() => {
+		title;
+
 		clearInterval(lastTitleInterval);
 		lastTitleInterval = setTimeout(() => {
 			onTitleUpdate(title);
