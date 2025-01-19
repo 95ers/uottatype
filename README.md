@@ -1,38 +1,6 @@
-# sv
+# uOttaType
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+uOttaType is an AI powered real-time collaborative document editor. It allows users to create documents that can be shared with collaborators, and worked on in real-time, with quality of life features such as, voice chatting and many AI generation techniques. uOttaType serves to enhance document editing by providing a centralized application with all the tools you need to accelerate your writing experience.
 
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Frameworks and Tools used
+The uOttaType website was created using SvelteKit and TypeScript. Our backend server used Lucia auth for authentication and Drizzle as an ORM. This backend server communicated in real-time to users using the Solace PubSub+ event broker. Our website contains a plethora of AI tools available for use. For these AI tools we incorporated Grok and OLlama and used the BGE-m3, Open-AI whisper, and Llama 3 models.
