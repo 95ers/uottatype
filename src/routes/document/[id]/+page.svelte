@@ -15,6 +15,7 @@
 	let listener;
 	let titleListener;
 	let messageListener;
+	let cursorListener;
 
 	let messages: string[] = $state([]);
 	let msg: string = $state('');
@@ -23,6 +24,10 @@
 		listener = solace.subscribeJson(`${topic}/update`, onUpdate);
 		titleListener = solace.subscribeJson(`${topic}/title`, onTitle);
 		messageListener = solace.subscribeJson(`${topic}/message`, onMessage);
+		cursorListener = solace.subscribeJson(`${topic}/cursor`, ({ userId, x, y }) => {
+			if (userId === data.user.id) return;
+			editor.onCursorMove(userId, x, y);
+		});
 	});
 
 	async function onMessage({ action, userId }: Authenticated<string>) {
@@ -34,6 +39,7 @@
 		solace.unsubscribeJson(`${topic}/update`, listener);
 		solace.unsubscribeJson(`${topic}/title`, titleListener);
 		solace.unsubscribeJson(`${topic}/message`, messageListener);
+		solace.unsubscribeJson(`${topic}/cursor`, cursorListener);
 	});
 
 	async function onUpdate({ action, userId }: Authenticated<Updates>) {
@@ -118,9 +124,15 @@
 
 		const { imageText } = await response.json();
 
-		console.log({ imageText });
-
 		return imageText;
+	}
+
+	async function onCursorMoved(x: number, y: number) {
+		solace.publishJson(`${topic}/cursor`, {
+			userId: data.user.id,
+			x,
+			y
+		});
 	}
 </script>
 
@@ -131,6 +143,7 @@
 	{onUserAdd}
 	{onGenerateAltText}
 	{onGenerateImageText}
+	{onCursorMoved}
 	document={data.doc}
 	user={data.user}
 />

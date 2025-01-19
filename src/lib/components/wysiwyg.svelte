@@ -31,6 +31,7 @@
 		onUserAdd,
 		onGenerateAltText,
 		onGenerateImageText,
+		onCursorMoved,
 		document: doc,
 		user
 	}: {
@@ -39,6 +40,7 @@
 		onUserAdd: (username: string) => void;
 		onGenerateAltText: (image: HTMLImageElement) => Promise<string>;
 		onGenerateImageText: (src: string) => Promise<string>;
+		onCursorMoved: (x: number, y: number) => void;
 		document: Document;
 		user: User;
 	} = $props();
@@ -49,6 +51,7 @@
 	let editorContent = $state(doc.content);
 	let previousContent = untrack(() => editorContent);
 	let editorElement: HTMLDivElement;
+	let editorWrapper: HTMLDivElement;
 
 	let currentLine = $state(0);
 
@@ -204,6 +207,55 @@
 
 	let imageActionsOpen = $state(false);
 	let selectedImage: HTMLImageElement | null;
+
+	function stringToColor(inputString: string) {
+		let hash = 0;
+		for (let i = 0; i < inputString.length; i++) {
+			hash = inputString.charCodeAt(i) + ((hash << 5) - hash);
+		}
+
+		const r = (hash >> 0) & 0xff;
+		const g = (hash >> 8) & 0xff;
+		const b = (hash >> 16) & 0xff;
+
+		return `rgb(${r}, ${g}, ${b})`;
+	}
+
+	// x and y are normalized to the document width and height [0, 1]
+	export function onCursorMove(userId: string, x: number, y: number) {
+		let cursor = cursors.get(userId);
+
+		if (!cursor) {
+			cursor = document.createElement('div');
+			cursor.style.position = 'absolute';
+			cursor.style.width = '4px';
+			cursor.style.height = '25px';
+			cursor.style.backgroundColor = stringToColor(userId);
+			cursor.style.zIndex = '1000';
+			cursor.style.pointerEvents = 'none';
+			cursor.style.transition = 'transform 0.1s';
+			cursor.style.top = '0';
+			cursor.style.left = '0';
+			editorWrapper.appendChild(cursor);
+			cursors.set(userId, cursor);
+		}
+
+		console.log(cursor);
+
+		cursor.style.transform = `translate(${x * 100}cqw, ${y * 100}cqh)`;
+	}
+
+	const cursors = new Map<string, HTMLDivElement>();
+
+	let moveTimeout: number;
+
+	// get x and y within the `editorElement` from 0 to 1
+	function onMouseMove(event: MouseEvent) {
+		const x = event.offsetX / editorElement.clientWidth;
+		const y = event.offsetY / editorElement.clientHeight;
+
+		onCursorMoved(x, y);
+	}
 </script>
 
 <Dialog.Root open={addUserOpen} onOpenChange={(o) => (addUserOpen = o)}>
@@ -330,26 +382,28 @@
 		</Button>
 	</div>
 
-	<div
-		bind:this={editorElement}
-		contenteditable="true"
-		class="mx-16 min-h-[150px] min-h-screen w-full max-w-5xl break-words rounded border bg-white p-24 focus:outline-none"
-		bind:innerHTML={editorContent}
-		oninput={onInput}
-		spellcheck="false"
-		onclick={onClick}
-		onkeydown={(e) => {
-			if (
-				e.key === 'Enter' ||
-				e.key === 'ArrowDown' ||
-				e.key === 'ArrowUp' ||
-				e.key === 'ArrowLeft' ||
-				e.key === 'ArrowRight'
-			) {
-				currentLine = getCurrentLineNumber();
-			}
-		}}
-	></div>
+	<div class="relative mx-16 w-full max-w-5xl" bind:this={editorWrapper} onmousemove={onMouseMove}>
+		<div
+			bind:this={editorElement}
+			contenteditable="true"
+			class="h-full min-h-screen w-full break-words rounded border bg-white p-24 opacity-100 focus:outline-none"
+			bind:innerHTML={editorContent}
+			oninput={onInput}
+			spellcheck="false"
+			onclick={onClick}
+			onkeydown={(e) => {
+				if (
+					e.key === 'Enter' ||
+					e.key === 'ArrowDown' ||
+					e.key === 'ArrowUp' ||
+					e.key === 'ArrowLeft' ||
+					e.key === 'ArrowRight'
+				) {
+					currentLine = getCurrentLineNumber();
+				}
+			}}
+		></div>
+	</div>
 
 	<Proximity documentId={doc.id} {user} initialLine={0} bind:this={proxmity} />
 </div>
