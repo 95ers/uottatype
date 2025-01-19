@@ -141,8 +141,6 @@ solace.subscribe('95ers/document/*/write', async (message, topic) => {
 			max_completion_tokens: 4096
 		});
 
-		console.log(response.choices[0]);
-
 		let responseMessage = response.choices[0].message.content;
 		const toolCalls = response.choices[0].message.tool_calls;
 

@@ -30,6 +30,7 @@
 		onTitleUpdate,
 		onUserAdd,
 		onGenerateAltText,
+		onGenerateImageText,
 		document: doc,
 		user
 	}: {
@@ -37,6 +38,7 @@
 		onTitleUpdate: (title: string) => void;
 		onUserAdd: (username: string) => void;
 		onGenerateAltText: (image: HTMLImageElement) => Promise<string>;
+		onGenerateImageText: (src: string) => Promise<string>;
 		document: Document;
 		user: User;
 	} = $props();
@@ -66,7 +68,6 @@
 
 	$effect(() => {
 		proxmity.setLine(currentLine);
-		console.log({ currentLine });
 	});
 
 	export function setTitle(t: string) {
@@ -309,7 +310,14 @@
 
 		<div class="ml-auto"></div>
 
-		<ImageCapture></ImageCapture>
+		<ImageCapture
+			onSubmit={async (src: string) => {
+				const text = await onGenerateImageText(src);
+
+				editorElement.focus();
+				document.execCommand('insertText', false, text);
+			}}
+		></ImageCapture>
 
 		<Recorder id={doc.id} userId={user.id} />
 

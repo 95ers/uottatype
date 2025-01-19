@@ -102,6 +102,26 @@
 
 		return altText;
 	}
+
+	async function onGenerateImageText(src: string) {
+		const params = new URLSearchParams();
+
+		params.append('image', src);
+
+		const response = await fetch(`/api/generateImageText`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			},
+			body: params
+		});
+
+		const { imageText } = await response.json();
+
+		console.log({ imageText });
+
+		return imageText;
+	}
 </script>
 
 <Wysiwyg
@@ -110,6 +130,7 @@
 	{onTitleUpdate}
 	{onUserAdd}
 	{onGenerateAltText}
+	{onGenerateImageText}
 	document={data.doc}
 	user={data.user}
 />
