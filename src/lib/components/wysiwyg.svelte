@@ -18,7 +18,9 @@
 		ImagePlus,
 		Italic,
 		Link,
+		Redo,
 		Underline,
+		Undo,
 		UserPlus
 	} from 'lucide-svelte';
 	import Recorder from './recorder.svelte';
@@ -300,33 +302,61 @@
 	</Sheet.Content>
 </Sheet.Root>
 
-<div class="flex w-full flex-col items-center bg-gray-50 p-8">
-	<div class="mx-16 mt-8 flex w-full max-w-5xl p-1">
-		<Input class="border-none bg-gray-50 text-2xl" bind:value={title} />
+<div class="bg-white p-4">
+	<div class="flex flex-row gap-8">
+		<Input
+			class="border-none text-2xl focus-visible:ring-white/0"
+			bind:value={title}
+			placeholder="Untitled document"
+		/>
+
+		<div class="ml-auto flex flex-row gap-2">
+			<Recorder id={doc.id} userId={user.id} />
+		</div>
+
+		<Button
+			onclick={() => {
+				addUserOpen = true;
+			}}
+			class="ml-auto bg-emerald-500"
+		>
+			<UserPlus size="16" />
+		</Button>
 	</div>
-	<div class="mx-16 my-6 flex w-full max-w-5xl gap-2 p-1">
+
+	<div class="flex w-full justify-center gap-2 p-1">
+		<Proximity documentId={doc.id} {user} initialLine={0} bind:this={proxmity} />
+
+		<Button variant="secondary" onclick={() => executeCommand('undo')}>
+			<Undo size="16" />
+		</Button>
+
+		<Button variant="secondary" onclick={() => executeCommand('redo')}>
+			<Redo size="16" />
+		</Button>
+
 		<Button variant="secondary" onclick={() => executeCommand('bold')}>
-			<Bold size="24" />
+			<Bold size="16" />
 		</Button>
 
 		<Button variant="secondary" onclick={() => executeCommand('italic')}>
-			<Italic size="24" />
+			<Italic size="16" />
 		</Button>
 
 		<Button variant="secondary" onclick={() => executeCommand('underline')}>
-			<Underline size="24" />
+			<Underline size="16" />
 		</Button>
 
 		<Button variant="secondary" onclick={() => executeCommand('justifyRight')}>
-			<AlignRight size="24" />
+			<AlignRight size="16" />
 		</Button>
 
 		<Button variant="secondary" onclick={() => executeCommand('justifyCenter')}>
-			<AlignCenter size="24" />
+			<AlignCenter size="16" />
 		</Button>
 
 		<Button variant="secondary" onclick={() => executeCommand('justifyLeft')}>
-			<AlignLeft size="24" />
+			<AlignLeft size="16" />
 		</Button>
 
 		<Button
@@ -336,7 +366,7 @@
 				if (url) executeCommand('createLink', url);
 			}}
 		>
-			<Link size="24" />
+			<Link size="16" />
 		</Button>
 
 		<Button
@@ -346,18 +376,16 @@
 				if (url) executeCommand('insertImage', url);
 			}}
 		>
-			<ImagePlus size="24" />
+			<ImagePlus size="16" />
 		</Button>
 
 		<Button variant="secondary" onclick={() => executeCommand('fontSize', '1')}>
-			<AArrowUp size="24" />
+			<AArrowUp size="16" />
 		</Button>
 
 		<Button variant="secondary" onclick={() => executeCommand('fontSize', '-1')}>
-			<AArrowDown size="24" />
+			<AArrowDown size="16" />
 		</Button>
-
-		<div class="ml-auto"></div>
 
 		<ImageCapture
 			onSubmit={async (src: string) => {
@@ -367,18 +395,10 @@
 				document.execCommand('insertText', false, text);
 			}}
 		></ImageCapture>
-
-		<Recorder id={doc.id} userId={user.id} />
-
-		<Button
-			onclick={() => {
-				addUserOpen = true;
-			}}
-		>
-			<UserPlus size="24" />
-		</Button>
 	</div>
+</div>
 
+<div class="flex w-full flex-col items-center bg-gray-50 p-8">
 	<div class="relative mx-16 w-full max-w-5xl" bind:this={editorWrapper} onmousemove={onMouseMove}>
 		<div
 			bind:this={editorElement}
@@ -401,6 +421,4 @@
 			}}
 		></div>
 	</div>
-
-	<Proximity documentId={doc.id} {user} initialLine={0} bind:this={proxmity} />
 </div>

@@ -157,7 +157,7 @@
 		</div>
 	{/if}
 	<form class="flex gap-4" onsubmit={onSendMessage}>
-		<Input placeholder="Chat!" bind:value={msg}></Input>
+		<Input placeholder="Send a message..." bind:value={msg}></Input>
 		<Button type="submit">Send</Button>
 	</form>
 </div>

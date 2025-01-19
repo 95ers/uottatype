@@ -125,7 +125,7 @@
 	);
 </script>
 
-<div class="fixed bottom-0 left-0 m-4 rounded-md border-2 bg-neutral-50 p-4">
+<div class="absolute left-6 self-center rounded-lg bg-neutral-100 p-2">
 	<h1>
 		<span class="font-bold">Voice</span> ({len} member{len === 1 ? '' : 's'}):
 		{[...lines.entries()]
