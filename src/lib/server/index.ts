@@ -11,8 +11,6 @@ solace.subscribeJson(
 	async ({ action: updates, userId }: Authenticated<Updates>, topic: string) => {
 		const id = topic.split('/')[2];
 
-		console.log('start');
-
 		await db.transaction(async (db) => {
 			const [doc] = await db.select().from(document).for('update').where(eq(document.id, id));
 
@@ -45,6 +43,15 @@ solace.subscribeJson(
 			userId,
 			action: updates
 		});
+	}
+);
+
+solace.subscribeJson(
+	'95ers/document/*/title',
+	async ({ action }: Authenticated<string>, topic: string) => {
+		const id = topic.split('/')[2];
+
+		await db.update(document).set({ title: action }).where(eq(document.id, id));
 	}
 );
 
