@@ -18,6 +18,13 @@
 			preview = e.target!.result as string;
 		};
 		reader.readAsDataURL(files[0]);
+		shown = true;
+	}
+	
+	function submitImage() {
+		if (!files) return;
+		
+		solace.publish(`95ers/document/${id}/${type}`, buf, userId);
 	}
 </script>
 
@@ -33,9 +40,10 @@
 		</Dialog.Header>
 		<div class="grid w-full max-w-sm items-center gap-1.5">
 			<Label for="picture">Picture</Label>
-			<Input accept="image/*" id="picture" type="file" bind:files onchange={onUpload} />
+			<input accept="image/*" id="picture" type="file" bind:files={files} onchange={onUpload} />
 			{#if shown}
 				<img id="preview" src={preview} alt="Preview" />
+				<Button onclick={submitImage}/>
 			{/if}
 		</div>
 	</Dialog.Content>
