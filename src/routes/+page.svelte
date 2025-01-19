@@ -50,15 +50,20 @@
 	<main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
 		<div class="mb-6 flex items-center justify-between">
 			<h2 class="text-2xl font-semibold text-gray-800">My Documents</h2>
-			<form method="POST" action="?/createDocument">
-				<Button type="submit" variant="default" class="flex items-center">New Document</Button>
-			</form>
 		</div>
 
 		<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+			<form method="POST" action="?/createDocument">
+				<Button
+					type="submit"
+					variant="ghost"
+					class="h-full w-full max-w-64 rounded-none bg-white text-5xl hover:bg-gray-50">+</Button
+				>
+			</form>
 			{#if !data.myDocs.length}
 				<p class="text-gray-800">You have not created any documents.</p>
 			{/if}
+
 			{#each data.myDocs.filter((doc) => doc.title
 					.toLowerCase()
 					.includes(searchQuery.toLowerCase())) as doc}
@@ -85,15 +90,47 @@
 
 {#snippet document(doc: any)}
 	<a href={`/document/${doc.id}`}>
-		<div class="bg-white p-4 shadow-md transition-shadow duration-200 hover:shadow-lg">
-			<h3 class="mx-1 mb-1 text-lg font-medium">{doc.title}</h3>
-			<div class="flex">
-				<img
-					src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png"
-					alt="Google Docs"
-					class="mr-2 h-8 w-8"
+		<div class="max-w-64 bg-white shadow-md transition-shadow duration-200 hover:shadow-lg">
+			<p class=" border-b p-4 text-[0.3rem] leading-3">
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+				labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+				laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+				voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+				cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. <br
 				/>
-				<p class="text-sm text-gray-500">Created: {doc.createdAt.toUTCString()}</p>
+
+				Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
+				laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
+				architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit
+				aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione
+				voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet,
+				consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et
+				dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum
+				exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi
+				consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil
+				molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur? <br />
+
+				At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium
+				voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati
+				cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id
+				est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam
+				libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod
+				maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
+				Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut
+				et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a
+				sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis
+				doloribus asperiores repellat. <br />
+			</p>
+			<div class="p-4">
+				<h3 class="mx-2 text-lg font-medium">{doc.title}</h3>
+				<div class="flex items-center p-1">
+					<img
+						src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_48dp.png"
+						alt="Google Docs"
+						class="h-8 w-8"
+					/>
+					<p class="text-sm text-gray-500">Created: {doc.createdAt.toDateString()}</p>
+				</div>
 			</div>
 		</div>
 	</a>
