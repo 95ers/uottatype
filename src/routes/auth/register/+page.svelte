@@ -49,7 +49,7 @@
 		<p class="mt-2 text-center text-sm text-gray-600">
 			Or
 			<a href="/auth/login" class="font-medium text-blue-600 hover:text-blue-500">
-				Log in to an existing account
+				log in to an existing account
 			</a>
 		</p>
 	</div>

@@ -6,7 +6,7 @@
 	import { Button } from './ui/button';
 	import { Input } from './ui/input';
 	import { Label } from './ui/label';
-	import { untrack } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import type { Document, User } from '$lib/server/db/schema';
 	import {
 		AArrowDown,
@@ -197,8 +197,8 @@
 		return Math.ceil((top - editorElement.getBoundingClientRect().top) / lineHeight) - 5;
 	}
 
-	$effect(() => {
-		console.log('Current line', currentLine);
+	onMount(() => {
+		proxmity.setLine(currentLine);
 	});
 
 	let imageActionsOpen = $state(false);

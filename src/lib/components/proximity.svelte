@@ -15,6 +15,8 @@
 		initialLine: number;
 	} = $props();
 
+	const PROXIMITY_THRESHOLD = 5;
+
 	let line = $state(initialLine);
 
 	export function setLine(l: number) {
@@ -58,7 +60,7 @@
 		const meta = JSON.parse(message.getUserData());
 
 		if (meta.userId === user.id) return;
-		if (Math.abs(meta.line - line) > 10) return;
+		if (Math.abs(meta.line - line) > PROXIMITY_THRESHOLD) return;
 
 		const array = message.getBinaryAttachment() as Uint8Array;
 		const buffer = array.buffer.slice(array.byteOffset, array.byteLength + array.byteOffset);
@@ -118,17 +120,17 @@
 		}
 	}
 
-	const len = $derived([...lines.values()].filter((l) => Math.abs(l - line) <= 10).length);
+	const len = $derived(
+		[...lines.values()].filter((l) => Math.abs(l - line) <= PROXIMITY_THRESHOLD).length
+	);
 </script>
 
-<div class="fixed bottom-0 left-0 m-8 rounded-md border-2 p-4">
-	{#each lines as [username, l]}
-		{#if Math.abs(l - line) <= 10}
-			<p>{username}</p>
-		{/if}
-	{/each}
-
+<div class="fixed bottom-0 left-0 m-4 rounded-md border-2 bg-neutral-50 p-4">
 	<h1>
-		<span class="font-bold">Voice</span> ({len} member{len === 1 ? '' : 's'})
+		<span class="font-bold">Voice</span> ({len} member{len === 1 ? '' : 's'}):
+		{[...lines.entries()]
+			.filter(([_, l]) => Math.abs(l - line) <= PROXIMITY_THRESHOLD)
+			.map(([username]) => username)
+			.join(', ') || 'No one nearby'}
 	</h1>
 </div>

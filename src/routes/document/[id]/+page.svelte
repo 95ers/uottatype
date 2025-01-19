@@ -8,7 +8,6 @@
 	import Wysiwyg from '$lib/components/wysiwyg.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import Proximity from '$lib/components/proximity.svelte';
 
 	const topic = `95ers/document/${data.doc.id}`;
 
@@ -28,6 +27,7 @@
 
 	async function onMessage({ action, userId }: Authenticated<string>) {
 		messages.push(action);
+		messages = messages.slice(-5);
 	}
 
 	onDestroy(() => {
@@ -114,9 +114,9 @@
 	user={data.user}
 />
 
-<div class="fixed bottom-0 right-0 m-16 rounded-md border-2 p-4">
+<div class="fixed bottom-0 right-0 m-4 rounded-md border-2 bg-neutral-50/80 p-2">
 	{#if messages.length}
-		<div class="my-2 flex flex-col gap-4">
+		<div class="flex flex-col pb-1">
 			{#each messages as message}
 				<p>{message}</p>
 			{/each}

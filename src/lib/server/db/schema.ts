@@ -1,4 +1,13 @@
-import { pgTable, text, integer, timestamp, uuid, primaryKey } from 'drizzle-orm/pg-core';
+import {
+	pgTable,
+	text,
+	integer,
+	timestamp,
+	uuid,
+	primaryKey,
+	vector,
+	boolean
+} from 'drizzle-orm/pg-core';
 
 export const user = pgTable('user', {
 	id: text('id').primaryKey(),
@@ -22,6 +31,11 @@ export const document = pgTable('document', {
 		.references(() => user.id),
 	title: text('title').notNull(),
 	content: text('content').notNull(),
+	embedding: vector('embedding', { dimensions: 1024 }),
+	embeddingUpdatedAt: timestamp('embedding_updated_at', { withTimezone: true })
+		.notNull()
+		.defaultNow(),
+	embeddingNeedsUpdate: boolean('embedding_needs_update').notNull().default(false),
 	createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
 });
 
