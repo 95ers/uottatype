@@ -1,0 +1,329 @@
+{
+	"components": {
+		"schemas": {
+			"Line": {
+				"x-ep-schema-version": "0.1.0",
+				"x-ep-schema-state-id": "2",
+				"x-ep-schema-version-id": "glhgj37k9yy",
+				"x-ep-schema-id": "gbjr9z9rikf",
+				"x-ep-schema-state-name": "RELEASED",
+				"x-ep-schema-name": "Line",
+				"x-ep-application-domain-id": "g9f58bko44c",
+				"properties": { "line": { "type": "string" }, "username": { "type": "string" } },
+				"x-ep-schema-version-displayname": "",
+				"x-ep-shared": "false",
+				"x-ep-application-domain-name": "95ers"
+			},
+			"Write": {
+				"x-ep-schema-version": "0.1.0",
+				"x-ep-schema-state-id": "2",
+				"x-ep-schema-version-id": "6qce4cakdi2",
+				"x-ep-schema-id": "jap69afl38p",
+				"x-ep-schema-state-name": "RELEASED",
+				"x-ep-schema-name": "Write",
+				"x-ep-application-domain-id": "g9f58bko44c",
+				"x-ep-schema-version-displayname": "",
+				"x-ep-shared": "false",
+				"x-ep-application-domain-name": "95ers"
+			},
+			"Transcribe": {
+				"x-ep-schema-version": "0.1.0",
+				"x-ep-schema-state-id": "2",
+				"x-ep-schema-version-id": "0ok0nodxdmp",
+				"x-ep-schema-id": "9cdcuojj1lo",
+				"x-ep-schema-state-name": "RELEASED",
+				"x-ep-schema-name": "Transcribe",
+				"x-ep-application-domain-id": "g9f58bko44c",
+				"x-ep-schema-version-displayname": "",
+				"x-ep-shared": "false",
+				"x-ep-application-domain-name": "95ers"
+			},
+			"ContentUpdate": {
+				"x-ep-schema-version": "0.1.0",
+				"x-ep-schema-version-id": "0i0pabg4iro",
+				"x-ep-schema-state-name": "RELEASED",
+				"x-ep-schema-name": "ContentUpdate",
+				"type": "object",
+				"x-ep-application-domain-id": "g9f58bko44c",
+				"required": ["userId", "action"],
+				"x-ep-schema-version-displayname": "",
+				"x-ep-shared": "false",
+				"x-ep-application-domain-name": "95ers",
+				"x-ep-schema-state-id": "2",
+				"x-ep-schema-id": "fdevnyas2z7",
+				"additionalProperties": false,
+				"properties": {
+					"action": {
+						"type": "array",
+						"items": {
+							"oneOf": [
+								{
+									"additionalProperties": false,
+									"type": "object",
+									"title": "Addition",
+									"properties": {
+										"index": { "type": "integer" },
+										"text": { "type": "string" },
+										"type": { "type": "string", "enum": ["insert"] }
+									},
+									"required": ["type", "index", "text"]
+								},
+								{
+									"additionalProperties": false,
+									"type": "object",
+									"title": "Deletion",
+									"properties": {
+										"offset": { "type": "integer" },
+										"index": { "type": "integer" },
+										"type": { "type": "string", "enum": ["delete"] }
+									},
+									"required": ["type", "index", "offset"]
+								}
+							]
+						}
+					},
+					"userId": { "type": "string" }
+				}
+			},
+			"Message": {
+				"x-ep-schema-version": "0.1.0",
+				"x-ep-schema-state-id": "2",
+				"x-ep-schema-version-id": "2ar79jabkjg",
+				"x-ep-schema-id": "32j20vhpwlx",
+				"x-ep-schema-state-name": "RELEASED",
+				"x-ep-schema-name": "Message",
+				"x-ep-application-domain-id": "g9f58bko44c",
+				"properties": { "action": { "type": "string" }, "userId": { "type": "string" } },
+				"x-ep-schema-version-displayname": "",
+				"x-ep-shared": "false",
+				"x-ep-application-domain-name": "95ers"
+			},
+			"TitleUpdate": {
+				"x-ep-schema-version": "0.1.0",
+				"x-ep-schema-state-id": "2",
+				"x-ep-schema-version-id": "tn2jal69nvj",
+				"x-ep-schema-id": "jysa84aum8z",
+				"x-ep-schema-state-name": "RELEASED",
+				"x-ep-schema-name": "TitleUpdate",
+				"x-ep-application-domain-id": "g9f58bko44c",
+				"properties": { "title": { "type": "string" }, "userId": { "type": "string" } },
+				"x-ep-schema-version-displayname": "",
+				"x-ep-shared": "false",
+				"x-ep-application-domain-name": "95ers"
+			},
+			"Cursor": {
+				"x-ep-schema-version": "0.1.0",
+				"x-ep-schema-state-id": "2",
+				"x-ep-schema-version-id": "fknf7hj20am",
+				"x-ep-schema-id": "aja0f4rjrmz",
+				"x-ep-schema-state-name": "RELEASED",
+				"x-ep-schema-name": "Cursor",
+				"x-ep-application-domain-id": "g9f58bko44c",
+				"properties": {
+					"x": { "type": "number" },
+					"y": { "type": "number" },
+					"userId": { "type": "string" }
+				},
+				"x-ep-schema-version-displayname": "",
+				"x-ep-shared": "false",
+				"x-ep-application-domain-name": "95ers"
+			}
+		},
+		"messages": {
+			"LineEvent": {
+				"x-ep-event-id": "blph3wa3l8x",
+				"x-ep-event-version-displayname": "",
+				"description": "",
+				"x-ep-application-domain-id": "g9f58bko44c",
+				"schemaFormat": "application/vnd.aai.asyncapi+json;version=2.0.0",
+				"x-ep-event-state-name": "RELEASED",
+				"x-ep-shared": "false",
+				"x-ep-application-domain-name": "95ers",
+				"x-ep-event-version-id": "zspziz6h0qh",
+				"payload": { "$ref": "#/components/schemas/Line" },
+				"x-ep-event-version": "0.1.0",
+				"x-ep-event-name": "LineEvent",
+				"contentType": "application/json",
+				"x-ep-event-state-id": "2"
+			},
+			"Write": {
+				"x-ep-event-id": "0f85lw3x7ia",
+				"x-ep-event-version-displayname": "",
+				"description": "",
+				"x-ep-application-domain-id": "g9f58bko44c",
+				"schemaFormat": "application/vnd.aai.asyncapi+json;version=2.0.0",
+				"x-ep-event-state-name": "RELEASED",
+				"x-ep-shared": "false",
+				"x-ep-application-domain-name": "95ers",
+				"x-ep-event-version-id": "wjqfrsxc52o",
+				"payload": { "$ref": "#/components/schemas/Write" },
+				"x-ep-event-version": "0.1.0",
+				"x-ep-event-name": "Write",
+				"contentType": "application/json",
+				"x-ep-event-state-id": "2"
+			},
+			"ContentUpdateEvent": {
+				"x-ep-event-id": "ey57biu9iqu",
+				"x-ep-event-version-displayname": "",
+				"description": "",
+				"x-ep-application-domain-id": "g9f58bko44c",
+				"schemaFormat": "application/vnd.aai.asyncapi+json;version=2.0.0",
+				"x-ep-event-state-name": "RELEASED",
+				"x-ep-shared": "false",
+				"x-ep-application-domain-name": "95ers",
+				"x-ep-event-version-id": "wsl66faqeja",
+				"payload": { "$ref": "#/components/schemas/ContentUpdate" },
+				"x-ep-event-version": "0.1.0",
+				"x-ep-event-name": "ContentUpdateEvent",
+				"contentType": "application/json",
+				"x-ep-event-state-id": "2"
+			},
+			"TranscribeEvent": {
+				"x-ep-event-id": "vcyoy7enixd",
+				"x-ep-event-version-displayname": "",
+				"description": "",
+				"x-ep-application-domain-id": "g9f58bko44c",
+				"schemaFormat": "application/vnd.aai.asyncapi+json;version=2.0.0",
+				"x-ep-event-state-name": "RELEASED",
+				"x-ep-shared": "false",
+				"x-ep-application-domain-name": "95ers",
+				"x-ep-event-version-id": "33mx6aa6eyj",
+				"payload": { "$ref": "#/components/schemas/Transcribe" },
+				"x-ep-event-version": "0.1.0",
+				"x-ep-event-name": "TranscribeEvent",
+				"contentType": "application/json",
+				"x-ep-event-state-id": "2"
+			},
+			"MessageEvent": {
+				"x-ep-event-id": "6r9dd3h7z1q",
+				"x-ep-event-version-displayname": "",
+				"description": "",
+				"x-ep-application-domain-id": "g9f58bko44c",
+				"schemaFormat": "application/vnd.aai.asyncapi+json;version=2.0.0",
+				"x-ep-event-state-name": "RELEASED",
+				"x-ep-shared": "false",
+				"x-ep-application-domain-name": "95ers",
+				"x-ep-event-version-id": "1du2hxsb6n2",
+				"payload": { "$ref": "#/components/schemas/Message" },
+				"x-ep-event-version": "0.1.0",
+				"x-ep-event-name": "MessageEvent",
+				"contentType": "application/json",
+				"x-ep-event-state-id": "2"
+			},
+			"TitleUpdateEvent": {
+				"x-ep-event-id": "9ttg12ay880",
+				"x-ep-event-version-displayname": "",
+				"description": "",
+				"x-ep-application-domain-id": "g9f58bko44c",
+				"schemaFormat": "application/vnd.aai.asyncapi+json;version=2.0.0",
+				"x-ep-event-state-name": "RELEASED",
+				"x-ep-shared": "false",
+				"x-ep-application-domain-name": "95ers",
+				"x-ep-event-version-id": "7m6vhgy94he",
+				"payload": { "$ref": "#/components/schemas/TitleUpdate" },
+				"x-ep-event-version": "0.1.0",
+				"x-ep-event-name": "TitleUpdateEvent",
+				"contentType": "application/json",
+				"x-ep-event-state-id": "2"
+			},
+			"CursorEvent": {
+				"x-ep-event-id": "0p54nxhdvqi",
+				"x-ep-event-version-displayname": "",
+				"description": "",
+				"x-ep-application-domain-id": "g9f58bko44c",
+				"schemaFormat": "application/vnd.aai.asyncapi+json;version=2.0.0",
+				"x-ep-event-state-name": "RELEASED",
+				"x-ep-shared": "false",
+				"x-ep-application-domain-name": "95ers",
+				"x-ep-event-version-id": "vn89o8cchlw",
+				"payload": { "$ref": "#/components/schemas/Cursor" },
+				"x-ep-event-version": "0.1.0",
+				"x-ep-event-name": "CursorEvent",
+				"contentType": "application/json",
+				"x-ep-event-state-id": "2"
+			},
+			"ContentUpdateServerEvent": {
+				"x-ep-event-id": "hlf7o8ppjym",
+				"x-ep-event-version-displayname": "",
+				"description": "",
+				"x-ep-application-domain-id": "g9f58bko44c",
+				"schemaFormat": "application/vnd.aai.asyncapi+json;version=2.0.0",
+				"x-ep-event-state-name": "RELEASED",
+				"x-ep-shared": "false",
+				"x-ep-application-domain-name": "95ers",
+				"x-ep-event-version-id": "aj0cij2y78p",
+				"payload": { "$ref": "#/components/schemas/ContentUpdate" },
+				"x-ep-event-version": "0.1.0",
+				"x-ep-event-name": "ContentUpdateServerEvent",
+				"contentType": "application/json",
+				"x-ep-event-state-id": "2"
+			}
+		}
+	},
+	"channels": {
+		"95ers/document/{documentId}/title": {
+			"subscribe": { "message": { "$ref": "#/components/messages/TitleUpdateEvent" } },
+			"publish": { "message": { "$ref": "#/components/messages/TitleUpdateEvent" } },
+			"parameters": {
+				"documentId": { "schema": { "type": "string" }, "x-ep-parameter-name": "documentId" }
+			}
+		},
+		"95ers/document/{documentId}/update": {
+			"publish": { "message": { "$ref": "#/components/messages/ContentUpdateServerEvent" } },
+			"parameters": {
+				"documentId": { "schema": { "type": "string" }, "x-ep-parameter-name": "documentId" }
+			}
+		},
+		"95ers/document/{documentId}/cursor": {
+			"subscribe": { "message": { "$ref": "#/components/messages/CursorEvent" } },
+			"publish": { "message": { "$ref": "#/components/messages/CursorEvent" } },
+			"parameters": {
+				"documentId": { "schema": { "type": "string" }, "x-ep-parameter-name": "documentId" }
+			}
+		},
+		"95ers/document/{documentId}/send": {
+			"subscribe": { "message": { "$ref": "#/components/messages/ContentUpdateEvent" } },
+			"parameters": {
+				"documentId": { "schema": { "type": "string" }, "x-ep-parameter-name": "documentId" }
+			}
+		},
+		"95ers/document/{documentId}/line": {
+			"subscribe": { "message": { "$ref": "#/components/messages/LineEvent" } },
+			"publish": { "message": { "$ref": "#/components/messages/LineEvent" } },
+			"parameters": {
+				"documentId": { "schema": { "type": "string" }, "x-ep-parameter-name": "documentId" }
+			}
+		},
+		"95ers/document/{documentId}/message": {
+			"subscribe": { "message": { "$ref": "#/components/messages/MessageEvent" } },
+			"publish": { "message": { "$ref": "#/components/messages/MessageEvent" } },
+			"parameters": {
+				"documentId": { "schema": { "type": "string" }, "x-ep-parameter-name": "documentId" }
+			}
+		},
+		"95ers/document/{documentId}/transcribe": {
+			"subscribe": { "message": { "$ref": "#/components/messages/TranscribeEvent" } },
+			"parameters": {
+				"documentId": { "schema": { "type": "string" }, "x-ep-parameter-name": "documentId" }
+			}
+		},
+		"95ers/document/{documentId}/write": {
+			"subscribe": { "message": { "$ref": "#/components/messages/Write" } },
+			"parameters": {
+				"documentId": { "schema": { "type": "string" }, "x-ep-parameter-name": "documentId" }
+			}
+		}
+	},
+	"asyncapi": "2.5.0",
+	"info": {
+		"x-ep-application-version": "0.1.0",
+		"x-ep-application-version-id": "50p2tkaoc3c",
+		"x-ep-application-id": "na205ig92i8",
+		"x-ep-state-name": "RELEASED",
+		"title": "Client",
+		"x-ep-application-domain-id": "g9f58bko44c",
+		"version": "0.1.0",
+		"x-ep-state-id": "2",
+		"x-ep-application-domain-name": "95ers"
+	}
+}
