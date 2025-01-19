@@ -111,7 +111,7 @@
 	{onUserAdd}
 	{onGenerateAltText}
 	document={data.doc}
-	userId={data.user.id}
+	user={data.user}
 />
 
 <div class="fixed bottom-0 right-0 m-16 rounded-md border-2 p-4">

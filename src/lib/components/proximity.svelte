@@ -1,14 +1,16 @@
 <script lang="ts">
 	import { solace } from '$lib/client';
+	import type { User } from '$lib/server/db/schema';
 	import type solaceJs from 'solclientjs';
 	import { onDestroy } from 'svelte';
+	import { SvelteMap } from 'svelte/reactivity';
 
 	let {
-		userId,
+		user,
 		documentId,
 		initialLine
 	}: {
-		userId: string;
+		user: User;
 		documentId: string;
 		initialLine: number;
 	} = $props();
@@ -17,6 +19,8 @@
 
 	export function setLine(l: number) {
 		line = l;
+
+		solace.publishJson(`95ers/document/${documentId}/line`, { username: user.username, line });
 	}
 
 	type Entry = {
@@ -28,10 +32,16 @@
 	type UserId = string;
 
 	const sources = new Map<UserId, Entry>();
+	const lines = new SvelteMap<UserId, number>();
 
 	$effect(() => {
 		requestMedia();
 		solace.subscribe(`95ers/document/${documentId}/proximity`, onAudio);
+		solace.subscribeJson(`95ers/document/${documentId}/line`, ({ username, line: l }) => {
+			if (username === user.username) return;
+
+			lines.set(username, l);
+		});
 	});
 
 	onDestroy(() => {
@@ -47,8 +57,8 @@
 	function onAudio(message: solaceJs.Message) {
 		const meta = JSON.parse(message.getUserData());
 
-		if (meta.userId === userId) return;
-		if (Math.abs(meta.line - line) > 3) return;
+		if (meta.userId === user.id) return;
+		if (Math.abs(meta.line - line) > 10) return;
 
 		const array = message.getBinaryAttachment() as Uint8Array;
 		const buffer = array.buffer.slice(array.byteOffset, array.byteLength + array.byteOffset);
@@ -97,7 +107,7 @@
 				solace.publish(
 					`95ers/document/${documentId}/proximity`,
 					rawData.buffer,
-					JSON.stringify({ userId, line })
+					JSON.stringify({ userId: user.id, line })
 				);
 			};
 
@@ -107,4 +117,18 @@
 			return false;
 		}
 	}
+
+	const len = $derived([...lines.values()].filter((l) => Math.abs(l - line) <= 10).length);
 </script>
+
+<div class="fixed bottom-0 left-0 m-8 rounded-md border-2 p-4">
+	{#each lines as [username, l]}
+		{#if Math.abs(l - line) <= 10}
+			<p>{username}</p>
+		{/if}
+	{/each}
+
+	<h1>
+		<span class="font-bold">Voice</span> ({len} member{len === 1 ? '' : 's'})
+	</h1>
+</div>

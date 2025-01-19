@@ -7,7 +7,7 @@
 	import { Input } from './ui/input';
 	import { Label } from './ui/label';
 	import { untrack } from 'svelte';
-	import type { Document } from '$lib/server/db/schema';
+	import type { Document, User } from '$lib/server/db/schema';
 	import {
 		AArrowDown,
 		AArrowUp,
@@ -31,14 +31,14 @@
 		onUserAdd,
 		onGenerateAltText,
 		document: doc,
-		userId
+		user
 	}: {
 		onContentUpdate: (updates: Updates) => void;
 		onTitleUpdate: (title: string) => void;
 		onUserAdd: (username: string) => void;
 		onGenerateAltText: (image: HTMLImageElement) => Promise<string>;
 		document: Document;
-		userId: string;
+		user: User;
 	} = $props();
 
 	let proxmity: Proximity;
@@ -311,7 +311,7 @@
 
 		<ImageCapture></ImageCapture>
 
-		<Recorder id={doc.id} {userId} />
+		<Recorder id={doc.id} userId={user.id} />
 
 		<Button
 			onclick={() => {
@@ -342,6 +342,6 @@
 			}
 		}}
 	></div>
-</div>
 
-<Proximity documentId={doc.id} {userId} initialLine={0} bind:this={proxmity} />
+	<Proximity documentId={doc.id} {user} initialLine={0} bind:this={proxmity} />
+</div>
