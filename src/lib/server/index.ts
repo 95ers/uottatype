@@ -104,12 +104,10 @@ solace.subscribe('95ers/document/*/write', async (message, topic) => {
 			model: 'whisper-large-v3-turbo'
 		});
 
-		console.log(text);
-
 		const messages: ChatCompletionMessageParam[] = [
 			{
 				role: 'system',
-				content: `You are a document writing assistant. Use the search_documents function to search for relevant content in the user's documents. Output text to be directly added to the document, do not include words like "Here's a suggestion" or "I think", be confident and write.`
+				content: `You are a document writing assistant. Output text to be directly added to the document, do not include words like "Here's a suggestion" or "I think", be confident and write.`
 			},
 			{
 				role: 'user',
@@ -143,10 +141,10 @@ solace.subscribe('95ers/document/*/write', async (message, topic) => {
 			max_completion_tokens: 4096
 		});
 
+		console.log(response.choices[0]);
+
 		let responseMessage = response.choices[0].message.content;
 		const toolCalls = response.choices[0].message.tool_calls;
-
-		console.log(toolCalls);
 
 		if (toolCalls) {
 			const functions = {
@@ -156,13 +154,6 @@ solace.subscribe('95ers/document/*/write', async (message, topic) => {
 					return docs.map((x) => x.content).join('\n');
 				}
 			};
-
-			if (responseMessage) {
-				messages.push({
-					role: 'user',
-					content: responseMessage
-				});
-			}
 
 			for (const toolCall of toolCalls) {
 				let json;
@@ -205,6 +196,8 @@ solace.subscribe('95ers/document/*/write', async (message, topic) => {
 	} catch (e) {
 		console.error(e);
 	} finally {
-		fs.unlinkSync(name);
+		try {
+			fs.unlinkSync(name);
+		} catch {}
 	}
 });

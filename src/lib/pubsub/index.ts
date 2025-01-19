@@ -138,8 +138,6 @@ export class Client extends EventEmitter {
 	) {
 		await this.ready;
 
-		console.log('sending');
-
 		const message = solace.SolclientFactory.createMessage();
 
 		message.setDestination(solace.SolclientFactory.createTopicDestination(topic));
