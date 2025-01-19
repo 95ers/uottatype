@@ -27,7 +27,7 @@
 					class="lucide lucide-text"
 					><path d="M17 6.1H3" /><path d="M21 12.1H3" /><path d="M15.1 18H3" /></svg
 				>
-				<h1 class="text-xl font-semibold text-gray-800">uOtta9to5</h1>
+				<h1 class="text-xl font-semibold text-gray-800">uOttaType</h1>
 			</div>
 			<div class="flex items-center space-x-4">
 				<div class="relative">
