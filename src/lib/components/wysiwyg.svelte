@@ -238,8 +238,6 @@
 			cursors.set(userId, cursor);
 		}
 
-		console.log(cursor);
-
 		cursor.style.top = `${y * 100}%`;
 		cursor.style.left = `${x * 100}%`;
 	}

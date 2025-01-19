@@ -1,7 +1,7 @@
 import { db } from '$lib/server/db';
 import type { PageServerLoad } from './$types';
 import { document, documentAccess } from '../lib/server/db/schema';
-import { eq, exists } from 'drizzle-orm';
+import { and, eq, exists } from 'drizzle-orm';
 import { error, fail, redirect, type Actions } from '@sveltejs/kit';
 import * as auth from '$lib/server/auth';
 
@@ -20,7 +20,15 @@ export const load: PageServerLoad = async (event) => {
 		.from(document)
 		.where(
 			exists(
-				db.select().from(documentAccess).where(eq(documentAccess.userId, event.locals.user.id))
+				db
+					.select()
+					.from(documentAccess)
+					.where(
+						and(
+							eq(documentAccess.userId, event.locals.user.id),
+							eq(documentAccess.documentId, document.id)
+						)
+					)
 			)
 		);
 

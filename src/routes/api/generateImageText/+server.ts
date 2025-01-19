@@ -31,8 +31,6 @@ export async function POST(event) {
 		model: 'llama-3.2-11b-vision-preview'
 	});
 
-	console.log(response.choices[0].message.content);
-
 	return json({
 		imageText: response.choices[0].message.content!
 	});
