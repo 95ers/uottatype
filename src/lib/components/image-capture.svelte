@@ -6,25 +6,18 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 
-	let input;
-	let image: HTMLImageElement | null = null;
+	let input: HTMLInputElement;
+	let files: FileList;
 	let shown: boolean = false;
+	let preview: string;
 
 	function onUpload() {
-		const file = input?.files[0];
-		console.log(input.files.length);
-		if (file) {
-			const reader = new FileReader();
-			reader.addEventListener('load', () => {
-				if (image) {
-					image.src = reader.result as string;
-				}
-			});
-			shown = true;
-			reader.readAsDataURL(file);
-		} else {
-			console.error('Please upload a valid image file.');
-		}
+		let reader = new FileReader();
+		
+		reader.onload = function(e) {
+			preview = e.target!.result as string;
+		};
+		reader.readAsDataURL(files[0]);
 	}
 </script>
 
@@ -40,9 +33,9 @@
 		</Dialog.Header>
 		<div class="grid w-full max-w-sm items-center gap-1.5">
 			<Label for="picture">Picture</Label>
-			<Input id="picture" type="file" bind:this={input} on:change={() => onUpload()} />
+			<Input accept="image/*" id="picture" type="file" bind:files={files} onchange={onUpload} />
 			{#if shown}
-				<img id="preview" bind:this={image} alt="Preview" />
+				<img id="preview" src={preview} alt="Preview" />
 			{/if}
 		</div>
 	</Dialog.Content>
