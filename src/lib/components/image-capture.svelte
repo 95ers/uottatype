@@ -13,8 +13,8 @@
 
 	function onUpload() {
 		let reader = new FileReader();
-		
-		reader.onload = function(e) {
+
+		reader.onload = function (e) {
 			preview = e.target!.result as string;
 		};
 		reader.readAsDataURL(files[0]);
@@ -33,7 +33,7 @@
 		</Dialog.Header>
 		<div class="grid w-full max-w-sm items-center gap-1.5">
 			<Label for="picture">Picture</Label>
-			<Input accept="image/*" id="picture" type="file" bind:files={files} onchange={onUpload} />
+			<Input accept="image/*" id="picture" type="file" bind:files onchange={onUpload} />
 			{#if shown}
 				<img id="preview" src={preview} alt="Preview" />
 			{/if}

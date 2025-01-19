@@ -1,15 +1,15 @@
 import { and, asc, cosineDistance, desc, eq, gt, sql } from 'drizzle-orm';
-import { groq } from './client';
+import { ollama } from './client';
 import { db } from './db';
 import { document } from './db/schema';
 
 async function embed(content: string[]): Promise<number[][]> {
-	const resp = await groq.embeddings.create({
+	const resp = await ollama.embed({
 		input: content,
-		model: 'nomic-embed-text-v1_5'
+		model: 'bge-m3'
 	});
 
-	return resp.data.map((x) => x.embedding) as number[][];
+	return resp.embeddings;
 }
 
 export async function search(userId: string, text: string) {

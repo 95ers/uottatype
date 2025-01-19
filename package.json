@@ -61,6 +61,7 @@
 		"eventemitter3": "^5.0.1",
 		"fs": "0.0.1-security",
 		"groq-sdk": "^0.12.0",
+		"ollama": "^0.5.12",
 		"postgres": "^3.4.5",
 		"solclientjs": "^10.17.1"
 	}

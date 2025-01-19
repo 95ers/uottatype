@@ -99,15 +99,17 @@ solace.subscribe('95ers/document/*/write', async (message, topic) => {
 	fs.writeFileSync(name, bytes);
 
 	try {
-		const { text } = await groq.audio.translations.create({
+		const { text } = await groq.audio.transcriptions.create({
 			file: fs.createReadStream(name),
 			model: 'whisper-large-v3-turbo'
 		});
 
+		console.log(text);
+
 		const messages: ChatCompletionMessageParam[] = [
 			{
 				role: 'system',
-				content: `You are a document writing assistant. Use the search_documents function to search for relevant content in the user's documents. Output text that would be helpful to add to the user's document.`
+				content: `You are a document writing assistant. Use the search_documents function to search for relevant content in the user's documents. Output text to be directly added to the document, do not include words like "Here's a suggestion" or "I think", be confident and write.`
 			},
 			{
 				role: 'user',
@@ -144,6 +146,8 @@ solace.subscribe('95ers/document/*/write', async (message, topic) => {
 		let responseMessage = response.choices[0].message.content;
 		const toolCalls = response.choices[0].message.tool_calls;
 
+		console.log(toolCalls);
+
 		if (toolCalls) {
 			const functions = {
 				search_documents: async (query: string) => {
@@ -153,7 +157,12 @@ solace.subscribe('95ers/document/*/write', async (message, topic) => {
 				}
 			};
 
-			messages.push(responseMessage);
+			if (responseMessage) {
+				messages.push({
+					role: 'user',
+					content: responseMessage
+				});
+			}
 
 			for (const toolCall of toolCalls) {
 				let json;

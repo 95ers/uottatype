@@ -28,7 +28,7 @@
 					chunks = [];
 					const buf = await blob.arrayBuffer();
 
-					solace.publish(`95ers/document/${id}/${type}`, buf, userId);
+					solace.publish(`95ers/document/${id}/${type.value}`, buf, userId);
 				}
 			};
 
