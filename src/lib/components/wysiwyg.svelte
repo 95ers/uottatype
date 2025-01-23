@@ -248,12 +248,11 @@
 
 	const cursors = new Map<string, HTMLDivElement>();
 
-	let moveTimeout: number;
-
 	// get x and y within the `editorElement` from 0 to 1
 	function onMouseMove(event: MouseEvent) {
-		const x = event.offsetX / editorElement.clientWidth;
-		const y = event.offsetY / editorElement.clientHeight;
+		const rect = editorElement.getBoundingClientRect();
+		const x = (event.clientX - rect.left) / rect.width;
+		const y = (event.clientY - rect.top) / rect.height;
 
 		onCursorMoved(x, y);
 	}
